@@ -291,7 +291,47 @@ function build(d){
   const tp=d.totalPool||0,ar=d.allResolved||false,tb=new Set(be.map(b=>b.bettor)).size,tc=be.length,av=tc?Math.round(tp/tc):0;
   const rm=computeRanges(be,fi);
   const fs=fi.map(f=>{const fb=be.filter(b=>b.fightId===f.id),aB=fb.filter(b=>b.fighter==='A'),bB=fb.filter(b=>b.fighter==='B'),aT=aB.reduce((s,b)=>s+b.amount,0),bT=bB.reduce((s,b)=>s+b.amount,0),fT=aT+bT;return{f,aT,bT,fT,aP:fT?aT/fT*100:0,bP:fT?bT/fT*100:0,ac:aB.length,bc:bB.length,ab:aB,bb:bB};});
-  return renderHero(tp,tb,tc,av,fi)+renderStatsRow(fs,bo)+renderBettorStrip(bo)+fs.map(f=>renderFightCard(f,rm)).join('')+renderLedger(bo,ar)+'<footer>Fight Night &middot; Refreshes every 15s</footer>';
+  const info = `<div style="margin-top:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:.75rem;line-height:1.6">
+    <div style="font-weight:600;color:var(--text);margin-bottom:6px">About the Payouts</div>
+    <p style="color:var(--dim);margin-bottom:8px">Payouts change based on how much other people bet. The estimates shown are conservative — your actual payout could be higher (overflow bonus) or lower (pool shortage). <strong>All money paid in is paid out.</strong></p>
+
+    <details style="margin-bottom:6px;cursor:pointer">
+      <summary style="color:var(--gold);font-weight:600;font-size:.8rem">How payouts work</summary>
+      <div style="padding:8px 0 0 10px;color:var(--dim);font-size:.7rem">
+        <p>Everyone puts money into a pool. When a fight ends, the people who picked the winner split the pool.</p><br>
+        <p><strong>Step 1:</strong> You pick a fighter and bet an amount. Your bet goes into the cash pool.</p>
+        <p><strong>Step 2:</strong> After all fights, every winner gets their bet back first — you never lose money on a correct pick.</p>
+        <p><strong>Step 3:</strong> Whatever cash is left over gets split among the winners based on their fighter's odds. Underdogs win a bigger share.</p>
+        <p><strong>Step 4:</strong> Payouts are rounded to whole dollars so we can use physical cash.</p><br>
+        <p>If you bet on a <strong>big underdog</strong> and they win, you take a larger portion of the pool — that's the payout bonus. If too many people bet on the same winner, the pool gets spread thin.</p>
+      </div>
+    </details>
+
+    <details style="cursor:pointer">
+      <summary style="color:var(--gold);font-weight:600;font-size:.8rem">The math behind it</summary>
+      <div style="padding:8px 0 0 10px;color:var(--dim);font-size:.65rem;line-height:1.7">
+        <p><strong>Weight</strong> = 1 / (probability / 100)</p>
+        <p>Example: 20% fighter has weight 5.0x. 80% fighter has weight 1.25x.</p><br>
+        <p><strong>Raw Expected Win</strong> = bet × weight</p>
+        <p>Example: $10 on a 20% fighter = $10 × 5.0 = $50 expected.</p><br>
+        <p><strong>Conservative Estimate</strong> (shown in calculator):</p>
+        <p>- Favorites (weight &lt; 1.5): floor(raw × 1.0) with 40% minimum return</p>
+        <p>- Even odds (~2.0x): floor(raw × 0.85) — 15% discount</p>
+        <p>- Underdogs (&gt;2.0x): floor(raw × discount) where discount drops from 0.85 to 0.60</p>
+        <p>- Small bets ($1-$3): guaranteed at least $1 profit</p><br>
+        <p><strong>Final Payout</strong> (after all fights resolved):</p>
+        <p>1. Refunds are returned immediately.</p>
+        <p>2. All winners get their stake back from the pool.</p>
+        <p>3. Remaining pool is split by weight (underdogs get more).</p>
+        <p>4. Largest Remainder Method rounds to whole dollars:</p>
+        <p style="padding-left:10px">Each winner's payout is floored. Leftover dollars go to the highest decimal remainders. This guarantees every physical dollar is distributed.</p><br>
+        <p><strong>Overflow Bonus:</strong> If the total expected liability is less than the cash pool, the surplus is distributed to winners proportionally by weight.</p>
+        <p><strong>House Protection:</strong> If the pool is too small to cover all expected payouts, everything is scaled down proportionally. Winners still get their stake back first.</p>
+      </div>
+    </details>
+  </div>`;
+
+  return renderHero(tp,tb,tc,av,fi)+renderStatsRow(fs,bo)+renderBettorStrip(bo)+fs.map(f=>renderFightCard(f,rm)).join('')+renderLedger(bo,ar)+info+'<footer style="margin-top:10px">Fight Night &middot; Refreshes every 15s</footer>';
 }
 // ── Bet Calculator Modal ────────────────────────────────────────
 let modalState={fightId:0,probA:50,probB:50,nameA:'',nameB:'',colA:'',colB:'',pick:''};
@@ -383,6 +423,42 @@ function modalCalc(){
   document.getElementById('modalWarnings').innerHTML=warns;
 }
 
+function renderAdPage(){
+  return `<div style="text-align:center;padding:30px 0 10px">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:900;color:var(--gold);line-height:1.1;margin-bottom:6px">FIGHT NIGHT</div>
+    <div style="font-size:.8rem;color:var(--dim);margin-bottom:20px">Live Betting Pool &middot; Cash Prizes</div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px 16px;margin-bottom:14px;text-align:left">
+      <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-bottom:8px">Event Details</div>
+      <div style="display:flex;gap:10px;margin-bottom:6px"><span style="color:var(--gold);font-weight:600;min-width:70px">&#128197; Date</span><span style="color:var(--text)">August 11, Tuesday</span></div>
+      <div style="display:flex;gap:10px;margin-bottom:6px"><span style="color:var(--gold);font-weight:600;min-width:70px">&#128340; Time</span><span style="color:var(--text)">7:00 PM</span></div>
+      <div style="display:flex;gap:10px"><span style="color:var(--gold);font-weight:600;min-width:70px">&#128205; Location</span><span style="color:var(--text)">2572 Guilford Rd</span></div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px">
+      <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-bottom:10px">The Fights</div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:4px;align-items:center;font-size:.85rem;margin-bottom:6px">
+        <div style="text-align:right;font-weight:600;color:#2563eb">Christian</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)">vs</div><div style="text-align:left;font-weight:600;color:#fb7185">Julia</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:4px;align-items:center;font-size:.85rem;margin-bottom:6px">
+        <div style="text-align:right;font-weight:600;color:#a855f7">Aliya</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)">vs</div><div style="text-align:left;font-weight:600;color:#ec4899">Marissa</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:4px;align-items:center;font-size:.85rem">
+        <div style="text-align:right;font-weight:600;color:#22c55e">Yes</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)">vs</div><div style="text-align:left;font-weight:600;color:#ef4444">No</div>
+      </div>
+      <div style="font-size:.65rem;color:var(--dim);margin-top:8px;text-align:center">"Does Alex survive the first round?"</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;text-align:left">
+      <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-bottom:6px">How It Works</div>
+      <p style="font-size:.75rem;color:var(--dim);line-height:1.6">Place a bet on any fighter. Winners split the cash pool. Underdog wins pay more. <strong>All money paid in is paid out</strong> — no house cut.</p>
+      <p style="font-size:.75rem;color:var(--dim);line-height:1.6;margin-top:6px">The live feed will appear here once betting opens on fight night.</p>
+    </div>
+
+    <div style="font-size:.65rem;color:var(--dim);padding:10px 0 20px">&#9203; Waiting for the admin to go live...</div>
+  </div>`;
+}
+
 async function load(){
   const a=document.getElementById('app');
   try{
@@ -391,14 +467,12 @@ async function load(){
     const j=await r.json();
     if(!j||!j.length)throw Error('Empty');
     const s=j[0].data;
-    if(!s||s.offline===true){a.innerHTML='<div class="off"><div class="ei">&#128683;</div><h2>Feed Offline</h2><p>The admin hasn\'t started the feed.<br>Check back later.</p></div>';return;}
+    if(!s||s.offline===true){a.innerHTML=renderAdPage();return;}
     a.innerHTML=build(s);
-  }catch(e){a.innerHTML='<div class="off"><div class="ei">&#9888;</div><h2>Cannot Connect</h2><p style="font-size:.8rem;opacity:.6">'+e.message+'</p></div>';}
+  }catch(e){a.innerHTML=renderAdPage();}
 }
 load();
 setInterval(load,15000);
 </script>
 </body>
 </html>
-
-<!-- rebuild -->
