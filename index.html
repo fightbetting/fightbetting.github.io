@@ -151,6 +151,14 @@ function bettorColor(n){
   h=Math.abs(h);return 'hsl('+((h*137.508)%360)+','+(72+(h%20))+'%,'+(48+(Math.floor(h/7)%14))+'%)';
 }
 
+function estWin(amt,prob){
+  const w=1/(prob/100),raw=amt*w;
+  let r;
+  if(w<1.5)r=Math.floor(Math.max(raw,amt*1.4));
+  else{let d=.85;if(w>2)d=Math.max(.6,.85-(w-2)*.05);r=Math.floor(raw*d);}
+  if(amt<=3)r=Math.max(r,amt+1);return r<1?0:r;
+}
+
 function computePayouts(fights,bets){
   const tc=bets.reduce((s,b)=>s+b.amount,0);
   const ar=fights.every(f=>f.status!=='pending');
