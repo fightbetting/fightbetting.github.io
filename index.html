@@ -116,33 +116,82 @@ function bettorColor(n){
   let h=0;for(let i=0;i<n.length;i++)h=n.charCodeAt(i)+((h<<5)-h);
   h=Math.abs(h);return 'hsl('+((h*137.508)%360)+','+(72+(h%20))+'%,'+(48+(Math.floor(h/7)%14))+'%)';
 }
-function estWin(amt,prob){
-  const w=1/(prob/100),raw=amt*w;
-  let r;
-  if(w<1.5)r=Math.floor(Math.max(raw,amt*1.4));
-  else{let d=.85;if(w>2)d=Math.max(.6,.85-(w-2)*.05);r=Math.floor(raw*d);}
-  if(amt<=3)r=Math.max(r,amt+1);return r<1?0:r;
+
+function computePayouts(fights,bets){
+  const tc=bets.reduce((s,b)=>s+b.amount,0);
+  const ar=fights.every(f=>f.status!=='pending');
+  const exp=bets.map(b=>{
+    const f=fights.find(x=>x.id===b.fightId),p=b.fighter==='A'?f.probA:f.probB,w=1/(p/100);
+    let e=0,win=false,ref=false;
+    if(f.status==='refund'){e=b.amount;ref=true;}else if(f.status===b.fighter){e=b.amount*w;win=true;}
+    return{bettor:b.bettor,amount:b.amount,expected:e,isWinner:win,isRefund:ref};
+  });
+  const ld={};
+  exp.forEach(p=>{if(!ld[p.bettor])ld[p.bettor]={paid:0,raw:0,final:0};ld[p.bettor].paid+=p.amount;if(p.isRefund)ld[p.bettor].raw+=p.amount;else if(p.isWinner&&!ar)ld[p.bettor].raw+=p.expected;});
+  if(ar&&bets.length>0){
+    let tr=0,rp={},ws={},ww={};
+    exp.forEach(p=>{if(p.isRefund){tr+=p.amount;rp[p.bettor]=(rp[p.bettor]||0)+p.amount;}else if(p.isWinner){ws[p.bettor]=(ws[p.bettor]||0)+p.amount;ww[p.bettor]=(ww[p.bettor]||0)+p.expected;}});
+    const pf=tc-tr,ts=Object.values(ws).reduce((s,v)=>s+v,0),tw=Object.values(ww).reduce((s,v)=>s+v,0);
+    if(ts===0&&tr===0){Object.keys(ld).forEach(n=>ld[n].raw=ld[n].paid);}
+    else{
+      const al={};Object.keys(ws).forEach(n=>al[n]=0);
+      if(ts>0){if(pf>=ts)Object.keys(ws).forEach(n=>al[n]=ws[n]);else{const r=pf/ts;Object.keys(ws).forEach(n=>al[n]=Math.floor(ws[n]*r));}}
+      let u=Object.values(al).reduce((s,v)=>s+v,0),l=pf-u;
+      if(l>0&&tw>0)Object.keys(ww).forEach(n=>al[n]+=l*(ww[n]/tw));
+      Object.keys(rp).forEach(n=>{if(!al[n])al[n]=0;al[n]+=rp[n];});
+      Object.keys(al).forEach(n=>ld[n].raw=al[n]);
+    }
+    let eb=[],sf=0;
+    Object.keys(ld).forEach(n=>{if(ld[n].raw>0){let f=Math.floor(ld[n].raw),r=ld[n].raw-f;sf+=f;eb.push({name:n,fl:f,rem:r});}else ld[n].final=0;});
+    let lo=tc-sf;eb.sort((a,b)=>b.rem-a.rem);
+    for(let i=0;i<lo&&i<eb.length;i++)eb[i].fl+=1;
+    eb.forEach(e=>ld[e.name].final=e.fl);
+  }
+  const res={};
+  Object.keys(ld).forEach(n=>{const d=ld[n],won=ar?d.final:d.raw;res[n]={paid:d.paid,won:Math.round(won),net:Math.round(won-d.paid)};});
+  return res;
 }
+
 function computeRanges(bets,fights){
   const rm={},by={};
   bets.forEach(b=>{(by[b.bettor]=by[b.bettor]||[]).push(b);});
-  Object.keys(by).forEach(n=>{
-    const bs=by[n],pf=[];const ps=new Set();
-    bs.forEach(b=>{const f=fights.find(x=>x.id===b.fightId);if(f&&f.status==='pending'&&!ps.has(b.fightId)){pf.push(f);ps.add(b.fightId);}});
-    let min=Infinity,max=-Infinity,e=0;
-    bs.forEach(b=>{const f=fights.find(x=>x.id===b.fightId),p=b.fighter==='A'?f.probA:f.probB;if(f.status===b.fighter)e+=estWin(b.amount,p);else if(f.status==='refund')e+=b.amount;});
-    if(pf.length===0){min=e;max=e;}
-    else{for(let m=0;m<(1<<pf.length);m++){let t=0;bs.forEach(b=>{const f=fights.find(x=>x.id===b.fightId),p=b.fighter==='A'?f.probA:f.probB;if(f.status===b.fighter)t+=estWin(b.amount,p);else if(f.status==='refund')t+=b.amount;else if(f.status==='pending'){const i=pf.findIndex(x=>x.id===f.id);if(m&(1<<i))t+=estWin(b.amount,p);}});if(t<min)min=t;if(t>max)max=t;}}
-    rm[n]={min:Math.round(min)||0,max:Math.round(max)||0,est:Math.round(e)||0};
-  });return rm;
+  const pf=fights.filter(f=>f.status==='pending');
+  const scenarios=pf.length?Math.pow(2,pf.length):1;
+  const names=Object.keys(by);
+  names.forEach(n=>rm[n]={min:Infinity,max:-Infinity,est:0});
+  for(let s=0;s<scenarios;s++){
+    const modFights=fights.map(f=>{
+      if(f.status!=='pending')return f;
+      const idx=pf.findIndex(p=>p.id===f.id);
+      const outcome=s&(1<<idx)?'A':'B';
+      return{...f,status:outcome};
+    });
+    const payouts=computePayouts(modFights,bets);
+    names.forEach(n=>{
+      const p=payouts[n]||{won:0};
+      if(s===0)rm[n].est=p.won;
+      if(p.won<rm[n].min)rm[n].min=p.won;
+      if(p.won>rm[n].max)rm[n].max=p.won;
+    });
+  }
+  names.forEach(n=>{if(rm[n].min===Infinity)rm[n].min=0;if(rm[n].max===-Infinity)rm[n].max=0;});
+  return rm;
 }
-function renderHero(pool,bettors,tickets,avg){
-  return `<div class="h-box"><div class="h-label">Total Cash in the Pool</div><div class="h-pool">$${pool}</div><div class="h-meta"><span><span class="dot dot-on"></span>Live</span><span>${bettors} bettor${bettors!==1?'s':''}</span><span>${tickets} ticket${tickets!==1?'s':''}</span><span>$${avg} avg</span></div></div>`;
+
+function renderHero(pool,bettors,totalBets,avg){
+  return `<div class="h-box"><div class="h-label">Total Cash in the Pool</div><div class="h-pool">$${pool}</div><div class="h-meta"><span><span class="dot dot-on"></span>Live</span><span>${bettors} bettor${bettors!==1?'s':''}</span><span>${totalBets} total bets</span><span>$${avg} avg</span></div></div>`;
 }
 function renderStatsRow(fs,bs){
-  const bf=fs.reduce((m,f)=>f.fT>m.fT?f:m,fs[0]||{fT:0}),mb=fs.reduce((m,f)=>(f.ac+f.bc)>(m.ac+m.bc)?f:m,fs[0]||{ac:0,bc:0});
-  const bb=bs.reduce((m,b)=>b.paid>(m.paid||0)?b:m,bs[0]||{}),tp=bs.reduce((s,b)=>s+Math.abs(b.net||0),0);
-  return `<div class="qs"><div class="qs-cell"><div class="qn" style="color:${bettorColor(bb.name||'?')}">${bb.name||'-'}</div><div class="ql">Top Bettor</div></div><div class="qs-cell"><div class="qn">${bf.fT||0}</div><div class="ql">Biggest $</div></div><div class="qs-cell"><div class="qn">${mb.ac+mb.bc||0}</div><div class="ql">Most Bets</div></div><div class="qs-cell"><div class="qn">$${tp}</div><div class="ql">Total P/L</div></div></div>`;
+  const bb=bs.reduce((m,b)=>b.paid>(m.paid||0)?b:m,bs[0]||{});
+  const bf=fs.reduce((m,f)=>f.fT>m.fT?f:m,fs[0]||{fT:0});
+  if(!bb.name)return'';
+  return `<div class="qs"><div class="qs-cell" style="grid-column:1/-1"><div style="display:flex;justify-content:center;align-items:center;gap:12px;padding:4px 0">
+    <span class="ld" style="width:28px;height:28px;font-size:.7rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;background:${bettorColor(bb.name)}">${bb.name.charAt(0).toUpperCase()}</span>
+    <span style="text-align:left"><div style="font-size:.8rem;font-weight:600;color:var(--text)">${bb.name}</div><div class="ql" style="font-size:.55rem;text-align:left">Top Bettor</div></span>
+    <span style="text-align:center;padding:0 8px"><div class="qn" style="font-size:1.1rem">$${bb.paid}</div><div class="ql" style="font-size:.5rem">Paid In</div></span>
+    <span style="text-align:center;padding:0 8px"><div class="qn" style="font-size:1.1rem;color:${bb.net>0?'var(--green)':'var(--dim)'}">${bb.net>0?'+':''}$${bb.net}</div><div class="ql" style="font-size:.5rem">Net</div></span>
+    <span style="text-align:center;padding:0 8px"><div class="qn" style="font-size:1.1rem">$${bf.fT||0}</div><div class="ql" style="font-size:.5rem">Big Fight</div></span>
+  </div></div></div>`;
 }
 function renderBettorStrip(bs){
   if(!bs.length)return'';
@@ -169,21 +218,25 @@ function renderFightCard(fs,rm){
     slices.forEach(s=>{const a=fs.fT?(s.amount/fs.fT)*360:0;if(!a)return;const sr=(ca*Math.PI)/180,er=((ca+a)*Math.PI)/180;svg+=`<path d="M${cx} ${cy} L${cx+R*Math.cos(sr)} ${cy+R*Math.sin(sr)} A${R} ${R} 0 ${a>180?1:0} 1 ${cx+R*Math.cos(er)} ${cy+R*Math.sin(er)} Z" fill="${s.col}" opacity=".85" stroke="#14141f" stroke-width="1"/>`;ca+=a;});
     const tc=aB.length+bB.length;
     svg+=`<circle cx="${cx}" cy="${cy}" r="22" fill="#14141f"/><text x="${cx}" y="${cy-3}" text-anchor="middle" fill="#e2e2ea" font-size="16" font-weight="800" font-family="'Barlow Condensed',sans-serif">${tc}</text><text x="${cx}" y="${cy+12}" text-anchor="middle" fill="#6b6b80" font-size="8">bets</text></svg>`;
-    h+=`<div class="pie-legend-wrap">${svg}<div class="legend-col"><div class="legend-header"><span class="ld-dot" style="background:${ac}"></span><b style="color:${ac}">${f.nameA}</b><span class="ld-amt">$${fs.aT}</span></div>`;
-    aB.forEach(b=>{const c=bettorColor(b.bettor);h+=`<div class="legend-row"><span class="ld-dot sm" style="background:${c}"></span><span class="ld-name">${b.bettor}</span><span class="ld-val">$${b.amount}</span></div>`;});
-    h+=`<div class="legend-header" style="margin-top:4px"><span class="ld-dot" style="background:${bc}"></span><b style="color:${bc}">${f.nameB}</b><span class="ld-amt">$${fs.bT}</span></div>`;
-    bB.forEach(b=>{const c=bettorColor(b.bettor);h+=`<div class="legend-row"><span class="ld-dot sm" style="background:${c}"></span><span class="ld-name">${b.bettor}</span><span class="ld-val">$${b.amount}</span></div>`;});
-    h+=`</div></div><div class="fc-b"><div class="b-title">Bettor Breakdown <span class="b-title-sub">predicted / total range</span></div>`;
+    h+=`<div class="pie-legend-wrap">${svg}<div class="legend-col">`;
+    h+=`<div class="legend-header"><span class="ld-dot" style="background:${ac}"></span><b style="color:${ac}">${f.nameA}</b><span class="ld-amt" style="font-weight:800;font-size:.85rem;color:${ac}">$${fs.aT}</span></div>`;
+    aB.forEach(b=>{const c=bettorColor(b.bettor);h+=`<div class="legend-row"><span class="ld-dot sm" style="background:${c}"></span><span class="ld-name">${b.bettor}</span><span class="ld-val" style="font-weight:700;font-size:.75rem">$${b.amount}</span></div>`;});
+    h+=`<div class="legend-header" style="margin-top:4px"><span class="ld-dot" style="background:${bc}"></span><b style="color:${bc}">${f.nameB}</b><span class="ld-amt" style="font-weight:800;font-size:.85rem;color:${bc}">$${fs.bT}</span></div>`;
+    bB.forEach(b=>{const c=bettorColor(b.bettor);h+=`<div class="legend-row"><span class="ld-dot sm" style="background:${c}"></span><span class="ld-name">${b.bettor}</span><span class="ld-val" style="font-weight:700;font-size:.75rem">$${b.amount}</span></div>`;});
+    h+=`</div></div>`;
+    h+=`<div class="fc-b"><div class="b-title">Estimated Payout Range <span class="b-title-sub">worst–best case across all fight outcomes</span></div>`;
     [...slices].sort((a,b)=>b.amount-a.amount).forEach(b=>{
-      const prob=b.side==='A'?f.probA:f.probB,p=estWin(b.amount,prob),rr=rm[b.bettor]||{min:0,max:0},c=bettorColor(b.bettor);
-      h+=`<div class="br"><div class="bri"><span class="bri-d" style="background:${c}"></span>${b.bettor}</div><div class="brr">$${b.amount}</div><div class="brp"><span class="brp-pred">~$${p}</span><span class="brp-sep">|</span><span class="brp-range">${rr.min}-${rr.max}</span></div></div>`;
+      const rr=rm[b.bettor]||{min:0,max:0},c=bettorColor(b.bettor);
+      h+=`<div class="br"><div class="bri"><span class="bri-d" style="background:${c}"></span>${b.bettor}</div>
+      <div class="brr" style="font-weight:700;font-size:.75rem">$${b.amount}</div>
+      <div class="brp"><span class="brp-range">$${rr.min}</span><span class="brp-sep">&ndash;</span><span class="brp-range">$${rr.max}</span></div></div>`;
     });
     h+='</div>';
   }else h+='<div class="empty-fight">No bets on this fight yet</div>';
   return h+'</div>';
 }
 function renderLedger(bs,ar){
-  if(!bs.length)return'<div class="lc"><div class="lt">No bets placed yet — pool is empty.</div></div>';
+  if(!bs.length)return'<div class="lc"><div class="lt">No bets placed yet.</div></div>';
   let h=`<div class="lc"><div class="lt">All Bettors</div><div class="lr lh"><div class="ln">Name</div><div class="lp">Paid</div><div class="lw">Won</div><div class="lv">Net</div></div>`;
   bs.forEach(b=>{let nc='nc';if(ar){if(b.net>0)nc='gc';else if(b.net<0)nc='rc';}else if(b.net>0)nc='wc';const sg=b.net>0?'+':'',c=bettorColor(b.name);h+=`<div class="lr"><div class="ln"><span class="ld" style="background:${c}">${b.name.charAt(0).toUpperCase()}</span>${b.name}</div><div class="lp">$${b.paid}</div><div class="lw gc">$${b.won}</div><div class="lv ${nc}">${sg}$${Math.abs(b.net)}</div></div>`;});
   return h+'</div>';
