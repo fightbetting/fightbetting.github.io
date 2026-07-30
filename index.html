@@ -163,7 +163,9 @@ function computePayouts(fights,bets){
   const tc=bets.reduce((s,b)=>s+b.amount,0);
   const ar=fights.every(f=>f.status!=='pending');
   const exp=bets.map(b=>{
-    const f=fights.find(x=>x.id===b.fightId),p=b.fighter==='A'?f.probA:f.probB,w=1/(p/100);
+    const f=fights.find(x=>x.id===b.fightId);
+    if(!f)return{bettor:b.bettor,amount:b.amount,expected:0,isWinner:false,isRefund:false};
+    const p=b.fighter==='A'?f.probA:f.probB,w=1/(p/100);
     let e=0,win=false,ref=false;
     if(f.status==='refund'){e=b.amount;ref=true;}else if(f.status===b.fighter){e=b.amount*w;win=true;}
     return{bettor:b.bettor,amount:b.amount,expected:e,isWinner:win,isRefund:ref};
@@ -242,7 +244,7 @@ function renderBettorStrip(bs){
   return '<div class="bs">'+s.map(b=>{const dc=b.net>0?'g':(b.net<0?'n':'n'),sg=b.net>0?'+':'';return`<div class="bm"><div class="bi" style="background:${bettorColor(b.name)}">${b.name.charAt(0).toUpperCase()}</div><div class="bn">${b.name}</div><div class="bv ${dc}">${sg}$${Math.abs(b.net)}</div></div>`;}).join('')+'</div>';
 }
 function renderFightCard(fs,rm){
-  const f=fs.f,ac=fcolor(f.nameA),bc=fcolor(f.nameB),q=f.id===3?'Survives the round?':'Who wins?';
+  const f=fs.f,ac=fcolor(f.nameA),bc=fcolor(f.nameB),q=f.title||'Who wins?';
   let badge='<span class="bad-p">Pending</span>';
   if(f.status==='A')badge='<span class="bad-w">'+f.nameA+' Won</span>';
   else if(f.status==='B')badge='<span class="bad-w" style="border-color:rgba(240,180,41,.2);color:var(--gold);background:rgba(240,180,41,.1)">'+f.nameB+' Won</span>';
