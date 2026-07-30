@@ -105,8 +105,13 @@ footer{text-align:center;font-size:.5rem;color:var(--dim);padding:16px 0;text-tr
 <div id="betModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:380px;width:100%;position:relative;max-height:90vh;overflow-y:auto;">
     <button onclick="closeBetCalc()" style="position:absolute;top:10px;right:12px;background:none;border:none;color:var(--dim);font-size:1.3rem;cursor:pointer;padding:4px;">✕</button>
-    <div id="modalTitle" style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:4px;"></div>
-    <div id="modalOdds" style="font-size:.7rem;color:var(--dim);margin-bottom:14px;"></div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:10px;">Test a Bet</div>
+
+    <div style="margin-bottom:10px;">
+      <label style="font-size:.7rem;color:var(--dim);display:block;margin-bottom:3px;">Select Fight</label>
+      <select id="modalFightSelect" onchange="modalFightChange()" style="width:100%;padding:8px 10px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:.85rem;font-family:'Outfit',sans-serif;"></select>
+    </div>
+    <div id="modalOdds" style="font-size:.7rem;color:var(--dim);margin-bottom:10px;text-align:center;"></div>
 
     <div style="display:flex;gap:8px;margin-bottom:14px;">
       <button id="modalPickA" onclick="modalPick('A')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:var(--bg);color:var(--text);font-weight:600;font-size:.85rem;cursor:pointer;transition:all .15s;"></button>
@@ -208,8 +213,9 @@ function computeRanges(bets,fights){
   return rm;
 }
 
-function renderHero(pool,bettors,totalBets,avg){
-  return `<div class="h-box"><div class="h-label">Total Cash in the Pool</div><div class="h-pool">$${pool}</div><div class="h-meta"><span><span class="dot dot-on"></span>Live</span><span>${bettors} bettor${bettors!==1?'s':''}</span><span>${totalBets} total bets</span><span>$${avg} avg</span></div></div>`;
+function renderHero(pool,bettors,totalBets,avg,fightsData){
+  const btn = `<button onclick="openBetCalc()" style="position:absolute;top:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-size:.65rem;cursor:pointer;font-family:'Outfit',sans-serif;">Test Bet</button>`;
+  return `<div class="h-box" style="position:relative">${btn}<div class="h-label">Total Cash in the Pool</div><div class="h-pool">$${pool}</div><div class="h-meta"><span><span class="dot dot-on"></span>Live</span><span>${bettors} bettor${bettors!==1?'s':''}</span><span>${totalBets} total bets</span><span>$${avg} avg</span></div></div>`;
 }
 function renderStatsRow(fs,bs){
   const bb=bs.reduce((m,b)=>b.paid>(m.paid||0)?b:m,bs[0]||{});
@@ -259,7 +265,6 @@ function renderFightCard(fs,rm){
       <div style="font-size:.65rem;color:var(--text);white-space:nowrap">$${b.amount} on ${fname}</div>
       <div style="font-size:.65rem;white-space:nowrap"><span class="brp-sep">Paying:</span> <span class="brp-range">$${rr.min}</span><span class="brp-sep">&ndash;</span><span class="brp-range">$${rr.max}</span></div></div>`;
     });
-    h+=`<button onclick="openBetCalc(${f.id},'${f.nameA}','${f.nameB}',${f.probA},${f.probB},'${ac}','${bc}')" style="width:100%;margin-top:8px;padding:8px;background:rgba(255,255,255,.03);border:1px dashed var(--border);border-radius:6px;color:var(--dim);font-size:.65rem;cursor:pointer;">+ Test a Bet</button>`;
     h+='</div>';
   }else h+='<div class="empty-fight">No bets on this fight yet</div>';
   return h+'</div>';
@@ -276,26 +281,49 @@ function build(d){
   const tp=d.totalPool||0,ar=d.allResolved||false,tb=new Set(be.map(b=>b.bettor)).size,tc=be.length,av=tc?Math.round(tp/tc):0;
   const rm=computeRanges(be,fi);
   const fs=fi.map(f=>{const fb=be.filter(b=>b.fightId===f.id),aB=fb.filter(b=>b.fighter==='A'),bB=fb.filter(b=>b.fighter==='B'),aT=aB.reduce((s,b)=>s+b.amount,0),bT=bB.reduce((s,b)=>s+b.amount,0),fT=aT+bT;return{f,aT,bT,fT,aP:fT?aT/fT*100:0,bP:fT?bT/fT*100:0,ac:aB.length,bc:bB.length,ab:aB,bb:bB};});
-  return renderHero(tp,tb,tc,av)+renderStatsRow(fs,bo)+renderBettorStrip(bo)+fs.map(f=>renderFightCard(f,rm)).join('')+renderLedger(bo,ar)+'<footer>Fight Night &middot; Refreshes every 15s</footer>';
+  return renderHero(tp,tb,tc,av,fi)+renderStatsRow(fs,bo)+renderBettorStrip(bo)+fs.map(f=>renderFightCard(f,rm)).join('')+renderLedger(bo,ar)+'<footer>Fight Night &middot; Refreshes every 15s</footer>';
 }
 // ── Bet Calculator Modal ────────────────────────────────────────
 let modalState={fightId:0,probA:50,probB:50,nameA:'',nameB:'',colA:'',colB:'',pick:''};
 
-function openBetCalc(fid,nA,nB,pA,pB,cA,cB){
-  modalState={fightId:fid,probA:pA,probB:pB,nameA:nA,nameB:nB,colA:cA,colB:cB,pick:''};
+function openBetCalc(){
+  const fights=window._lastData?.fights||[];
+  if(!fights.length)return;
+  const sel=document.getElementById('modalFightSelect');
+  sel.innerHTML='';
+  fights.forEach(f=>{
+    const opt=document.createElement('option');
+    opt.value=f.id;
+    opt.textContent=(f.title||f.nameA+' vs '+f.nameB);
+    sel.appendChild(opt);
+  });
   document.getElementById('betModal').style.display='flex';
-  document.getElementById('modalTitle').textContent='Fight '+fid+': '+nA+' vs '+nB;
-  document.getElementById('modalOdds').textContent=nA+' ('+pA+'%)  vs  '+nB+' ('+pB+'%)';
-  document.getElementById('modalPickA').textContent=nA;
-  document.getElementById('modalPickA').style.borderColor='var(--border)';
-  document.getElementById('modalPickB').textContent=nB;
-  document.getElementById('modalPickB').style.borderColor='var(--border)';
-  document.getElementById('modalAmount').value=5;
   document.getElementById('modalResults').style.display='none';
   document.getElementById('modalWarnings').innerHTML='';
+  modalState.pick='';
+  modalFightChange();
 }
 function closeBetCalc(){
   document.getElementById('betModal').style.display='none';
+}
+function modalFightChange(){
+  const sel=document.getElementById('modalFightSelect');
+  const fid=parseInt(sel.value);
+  const fights=window._lastData?.fights||[];
+  const f=fights.find(x=>x.id===fid);
+  if(!f)return;
+  const ac=fcolor(f.nameA),bc=fcolor(f.nameB);
+  modalState={fightId:fid,probA:f.probA,probB:f.probB,nameA:f.nameA,nameB:f.nameB,colA:ac,colB:bc,pick:''};
+  document.getElementById('modalOdds').textContent=f.nameA+' ('+f.probA+'%)  vs  '+f.nameB+' ('+f.probB+'%)';
+  document.getElementById('modalPickA').textContent=f.nameA;
+  document.getElementById('modalPickA').style.borderColor='var(--border)';
+  document.getElementById('modalPickA').style.background='var(--bg)';
+  document.getElementById('modalPickB').textContent=f.nameB;
+  document.getElementById('modalPickB').style.borderColor='var(--border)';
+  document.getElementById('modalPickB').style.background='var(--bg)';
+  document.getElementById('modalAmount').value=5;
+  document.getElementById('modalResults').style.display='none';
+  document.getElementById('modalWarnings').innerHTML='';
 }
 function modalPick(side){
   modalState.pick=side;
@@ -312,19 +340,12 @@ function modalCalc(){
   const amt=parseInt(document.getElementById('modalAmount').value)||0;
   if(amt<1){document.getElementById('modalResults').style.display='none';return;}
   const prob=modalState.pick==='A'?modalState.probA:modalState.probB;
-  const weight=1/(prob/100);
   const pred=estWin(amt,prob);
 
-  // Compute range by adding this hypothetical bet to the current pool
   const allBets=window._lastData?.bets||[];
   const fights=window._lastData?.fights||[];
   const testBets=[...allBets,{bettor:'__test__',fightId:modalState.fightId,fighter:modalState.pick,amount:amt}];
-  const testFights=fights.map(f=>{
-    if(f.id!==modalState.fightId||f.status!=='pending')return f;
-    // Keep this fight pending - we vary it + the other pendings for range
-    return f;
-  });
-  const ranges=computeRanges(testBets,testFights);
+  const ranges=computeRanges(testBets,fights);
   const r=ranges['__test__']||{min:0,max:0};
 
   document.getElementById('modalResults').style.display='block';
@@ -333,15 +354,15 @@ function modalCalc(){
   const totalPool=testBets.reduce((s,b)=>s+b.amount,0);
   document.getElementById('modalPool').textContent='$'+totalPool;
 
-  // Warnings
   let warns='';
+  if(totalPool<20)warns+=`<div style="color:var(--gold);margin-top:4px">&#9888; Small pot — currently only $${totalPool} in the pool. It will grow as more people bet, increasing payouts.</div>`;
   const poolRatio=totalPool>0?amt/totalPool:0;
-  if(poolRatio>0.3)warns+=`<div style="color:var(--gold);margin-top:4px">&#9888; Large bet — you may not get your full payout since this would be ${Math.round(poolRatio*100)}% of the pool.</div>`;
-  if(amt>50)warns+=`<div style="color:var(--gold);margin-top:4px">&#9888; Amount exceeds recommended max of $10. Payout depends heavily on others.</div>`;
-  if(prob>70)warns+=`<div style="color:var(--text-muted);margin-top:4px">&#9432; Safe pick — but smaller returns since they're the favorite.</div>`;
-  if(prob<30)warns+=`<div style="color:var(--text-muted);margin-top:4px">&#9432; Underdog bet — if they win, you get a bonus from the overflow pool.</div>`;
-  if(r.max-r.min>20)warns+=`<div style="color:var(--text-muted);margin-top:4px">&#9432; Wide range — your payout varies a lot depending on other fight results.</div>`;
-  if(r.max<amt)warns+=`<div style="color:var(--warning);margin-top:4px">&#9888; Payout may be less than your bet — the pool is too small to cover full payouts.</div>`;
+  if(poolRatio>0.3)warns+=`<div style="color:var(--gold);margin-top:4px">&#9888; Large bet — this would be ${Math.round(poolRatio*100)}% of the pool. You may not get your full payout.</div>`;
+  if(amt>10)warns+=`<div style="color:var(--gold);margin-top:4px">&#9888; Over $10 — recommended max. Larger bets depend heavily on others for full payout.</div>`;
+  if(prob>70)warns+=`<div style="color:var(--text-muted);margin-top:4px">&#9432; Safe pick — favorite with ${prob}% odds means smaller returns.</div>`;
+  if(prob<30)warns+=`<div style="color:var(--text-muted);margin-top:4px">&#9432; Underdog pick — if they win, you get a bonus from the overflow pool.</div>`;
+  if(r.max-r.min>20)warns+=`<div style="color:var(--text-muted);margin-top:4px">&#9432; Wide range — your payout varies significantly based on other fight results.</div>`;
+  if(r.max<amt*0.9)warns+=`<div style="color:var(--gold);margin-top:4px">&#9888; Pool may not cover this bet — expected payout is less than your wager.</div>`;
   document.getElementById('modalWarnings').innerHTML=warns;
 }
 
