@@ -224,12 +224,13 @@ function renderFightCard(fs,rm){
     h+=`<div class="legend-header" style="margin-top:4px"><span class="ld-dot" style="background:${bc}"></span><b style="color:${bc}">${f.nameB}</b><span class="ld-amt" style="font-weight:900;font-size:.95rem;color:${bc}">$${fs.bT}</span></div>`;
     bB.forEach(b=>{const c=bettorColor(b.bettor);h+=`<div class="legend-row"><span class="ld-dot sm" style="background:${c}"></span><span class="ld-name">${b.bettor}</span><span class="ld-val" style="font-weight:600;font-size:.65rem">$${b.amount}</span></div>`;});
     h+=`</div></div>`;
-    h+=`<div class="fc-b"><div class="b-title">Estimated Payout Range <span class="b-title-sub">worst–best case across all fight outcomes</span></div>`;
+    h+=`<div class="fc-b"><div class="b-title">Estimated Payout Range <span class="b-title-sub">per bettor across all fight outcomes</span></div>`;
     [...slices].sort((a,b)=>b.amount-a.amount).forEach(b=>{
       const rr=rm[b.bettor]||{min:0,max:0},c=bettorColor(b.bettor);
-      h+=`<div class="br"><div class="bri"><span class="bri-d" style="background:${c}"></span>${b.bettor}</div>
-      <div class="brr" style="font-weight:700;font-size:.75rem">$${b.amount}</div>
-      <div class="brp"><span class="brp-range">$${rr.min}</span><span class="brp-sep">&ndash;</span><span class="brp-range">$${rr.max}</span></div></div>`;
+      const fname=b.side==='A'?f.nameA:f.nameB;
+      h+=`<div class="br" style="grid-template-columns:1fr auto auto;gap:6px"><div class="bri"><span class="bri-d" style="background:${c}"></span>${b.bettor}</div>
+      <div style="font-size:.65rem;color:var(--text);white-space:nowrap">$${b.amount} on ${fname}</div>
+      <div style="font-size:.65rem;white-space:nowrap"><span class="brp-sep">Paying:</span> <span class="brp-range">$${rr.min}</span><span class="brp-sep">&ndash;</span><span class="brp-range">$${rr.max}</span></div></div>`;
     });
     h+='</div>';
   }else h+='<div class="empty-fight">No bets on this fight yet</div>';
