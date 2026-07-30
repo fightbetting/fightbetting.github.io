@@ -133,7 +133,13 @@ function bettorColor(n){
 // conservative estimate (same as app)
 function estWin(amt,prob){
   const w=1/(prob/100);
-  return Math.max(0,Math.floor(amt*w*0.85));
+  const raw=amt*w;
+  let r;
+  if(w<1.5)r=Math.floor(Math.max(raw,amt*1.4));
+  else{let d=0.85;if(w>2)d=Math.max(0.6,0.85-(w-2)*0.05);r=Math.floor(raw*d);}
+  if(amt<=3)r=Math.max(r,amt+1);
+  if(r<1)r=0;
+  return r;
 }
 
 // compute per-bettor payout range across all possible fight outcomes
