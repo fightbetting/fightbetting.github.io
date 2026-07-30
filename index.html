@@ -424,38 +424,103 @@ function modalCalc(){
 }
 
 function renderAdPage(){
-  return `<div style="text-align:center;padding:30px 0 10px">
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:900;color:var(--gold);line-height:1.1;margin-bottom:6px">FIGHT NIGHT</div>
-    <div style="font-size:.8rem;color:var(--dim);margin-bottom:20px">Live Betting Pool &middot; Cash Prizes</div>
+  return `<div style="text-align:center;padding:20px 0">
+    <!-- Header with decorative line -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold))"></div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:2.8rem;font-weight:900;color:var(--gold);line-height:1;letter-spacing:2px">FIGHT NIGHT</div>
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--gold),transparent)"></div>
+    </div>
+    <div style="font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:4px;margin-bottom:24px">Live Betting Pool &bull; Cash Prizes &bull; No House Cut</div>
 
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px 16px;margin-bottom:14px;text-align:left">
-      <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-bottom:8px">Event Details</div>
-      <div style="display:flex;gap:10px;margin-bottom:6px"><span style="color:var(--gold);font-weight:600;min-width:70px">&#128197; Date</span><span style="color:var(--text)">August 11, Tuesday</span></div>
-      <div style="display:flex;gap:10px;margin-bottom:6px"><span style="color:var(--gold);font-weight:600;min-width:70px">&#128340; Time</span><span style="color:var(--text)">7:00 PM</span></div>
-      <div style="display:flex;gap:10px"><span style="color:var(--gold);font-weight:600;min-width:70px">&#128205; Location</span><span style="color:var(--text)">2572 Guilford Rd</span></div>
+    <!-- Event Details Card -->
+    <div style="background:linear-gradient(135deg,var(--card),rgba(240,180,41,.04));border:1px solid var(--border);border-radius:12px;padding:20px 18px;margin-bottom:14px;text-align:left">
+      <div style="font-size:.55rem;text-transform:uppercase;letter-spacing:2.5px;color:var(--dim);margin-bottom:12px;text-align:center">Event Details</div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:4px 8px;font-size:.8rem">
+        <span style="font-size:1rem;text-align:center">&#128197;</span><span><strong style="color:var(--text)">August 11<sup>th</sup></strong><span style="color:var(--dim)">, Tuesday</span></span>
+        <span style="font-size:1rem;text-align:center">&#128340;</span><span><strong style="color:var(--text)">7:00 PM</strong><span style="color:var(--dim)">  —  doors open at 6:30</span></span>
+        <span style="font-size:1rem;text-align:center">&#128205;</span><span><strong style="color:var(--text)">2572 Guilford Rd</strong><span style="color:var(--dim)">  —  basement</span></span>
+      </div>
     </div>
 
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px">
-      <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-bottom:10px">The Fights</div>
-      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:4px;align-items:center;font-size:.85rem;margin-bottom:6px">
-        <div style="text-align:right;font-weight:600;color:#2563eb">Christian</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)">vs</div><div style="text-align:left;font-weight:600;color:#fb7185">Julia</div>
+    <!-- Fight Card -->
+    <div style="background:linear-gradient(135deg,var(--card),rgba(240,180,41,.04));border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px">
+      <div style="font-size:.5rem;text-transform:uppercase;letter-spacing:3px;color:var(--dim);margin-bottom:14px">The Card</div>
+
+      <!-- Fight 1 -->
+      <div style="position:relative;padding:12px 0;border-bottom:1px solid var(--border)">
+        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center">
+          <div style="text-align:right">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;line-height:1;color:#2563eb">Christian</div>
+            <div style="font-size:.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">20% odds &bull; 5.0x payout</div>
+          </div>
+          <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:700">VS</div>
+          <div style="text-align:left">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;line-height:1;color:#fb7185">Julia</div>
+            <div style="font-size:.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">80% odds &bull; 1.25x payout</div>
+          </div>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:4px;align-items:center;font-size:.85rem;margin-bottom:6px">
-        <div style="text-align:right;font-weight:600;color:#a855f7">Aliya</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)">vs</div><div style="text-align:left;font-weight:600;color:#ec4899">Marissa</div>
+
+      <!-- Fight 2 -->
+      <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center">
+          <div style="text-align:right">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;line-height:1;color:#a855f7">Aliya</div>
+            <div style="font-size:.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">50% odds &bull; 2.0x payout</div>
+          </div>
+          <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:700">VS</div>
+          <div style="text-align:left">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;line-height:1;color:#ec4899">Marissa</div>
+            <div style="font-size:.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">50% odds &bull; 2.0x payout</div>
+          </div>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:4px;align-items:center;font-size:.85rem">
-        <div style="text-align:right;font-weight:600;color:#22c55e">Yes</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)">vs</div><div style="text-align:left;font-weight:600;color:#ef4444">No</div>
+
+      <!-- Fight 3 -->
+      <div style="padding:12px 0 4px">
+        <div style="text-align:center;margin-bottom:8px">
+          <div style="font-size:.65rem;color:var(--dim);font-style:italic">"Does Alex make it through the first round?"</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center">
+          <div style="text-align:right">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;line-height:1;color:#22c55e">Alex</div>
+            <div style="font-size:.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">50% odds &bull; 2.0x payout</div>
+          </div>
+          <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:700">VS</div>
+          <div style="text-align:left">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;line-height:1;color:#ef4444">Lucas</div>
+            <div style="font-size:.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">50% odds &bull; 2.0x payout</div>
+          </div>
+        </div>
       </div>
-      <div style="font-size:.65rem;color:var(--dim);margin-top:8px;text-align:center">"Does Alex survive the first round?"</div>
     </div>
 
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;text-align:left">
-      <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-bottom:6px">How It Works</div>
-      <p style="font-size:.75rem;color:var(--dim);line-height:1.6">Place a bet on any fighter. Winners split the cash pool. Underdog wins pay more. <strong>All money paid in is paid out</strong> — no house cut.</p>
-      <p style="font-size:.75rem;color:var(--dim);line-height:1.6;margin-top:6px">The live feed will appear here once betting opens on fight night.</p>
+    <!-- How It Works -->
+    <div style="background:linear-gradient(135deg,var(--card),rgba(240,180,41,.04));border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;text-align:left">
+      <div style="font-size:.5rem;text-transform:uppercase;letter-spacing:3px;color:var(--dim);margin-bottom:10px;text-align:center">How the Pool Works</div>
+      <div style="display:grid;grid-template-columns:24px 1fr;gap:8px;font-size:.72rem;color:var(--dim);line-height:1.5">
+        <span style="color:var(--gold);font-weight:700;text-align:center">1</span><span>Pick a fighter and put cash in the pool. <strong style="color:var(--text)">Minimum $1 bet, whole dollars only.</strong></span>
+        <span style="color:var(--gold);font-weight:700;text-align:center">2</span><span>Watch the fights. If your fighter wins, <strong style="color:var(--text)">you get your stake back</strong> plus a share of the pot.</span>
+        <span style="color:var(--gold);font-weight:700;text-align:center">3</span><span>Underdog wins pay more. Favorites pay less. <strong style="color:var(--text)">All money paid in is paid out</strong> &mdash; no house cut, no fees.</span>
+        <span style="color:var(--gold);font-weight:700;text-align:center">4</span><span>Payouts are rounded to whole dollars so we use <strong style="color:var(--text)">physical cash &mdash; no coins.</strong></span>
+      </div>
     </div>
 
-    <div style="font-size:.65rem;color:var(--dim);padding:10px 0 20px">&#9203; Waiting for the admin to go live...</div>
+    <!-- Betting Info -->
+    <div style="background:linear-gradient(135deg,var(--card),rgba(240,180,41,.04));border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;text-align:center">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:700;color:var(--gold);margin-bottom:4px">Bring Cash</div>
+      <p style="font-size:.75rem;color:var(--dim);line-height:1.5">Recommended max bet is <strong style="color:var(--text)">$10</strong> so the pool stays fair for everyone. The more people who bet, the bigger the payouts.</p>
+    </div>
+
+    <!-- Live Status -->
+    <div style="padding:16px 0 24px;text-align:center">
+      <div style="font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-bottom:8px">Live Feed Status</div>
+      <div style="display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px">
+        <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#ef4444;margin-right:6px;vertical-align:middle"></span>
+        <span style="font-size:.7rem;color:var(--dim);vertical-align:middle">Offline &mdash; will appear here on fight night</span>
+      </div>
+    </div>
   </div>`;
 }
 
