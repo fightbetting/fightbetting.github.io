@@ -270,7 +270,7 @@ function renderFightCard(fs,rm){
     h+=`<div class="fc-b"><div class="b-title">Estimated Payout Range <span class="b-title-sub">per bettor across all fight outcomes</span></div>`;
     [...slices].sort((a,b)=>b.amount-a.amount).forEach(b=>{
       const rr=rm[b.bettor]||{min:0,max:0},c=bettorColor(b.bettor);
-      const fname=b.side==='A'?f.nameA:f.nameB;
+      const fname=b.fighter==='A'?f.nameA:f.nameB;
       h+=`<div class="br" style="grid-template-columns:1fr auto auto;gap:6px"><div class="bri"><span class="bri-d" style="background:${c}"></span>${b.bettor}</div>
       <div style="font-size:.65rem;color:var(--text);white-space:nowrap">$${b.amount} on ${fname}</div>
       <div style="font-size:.65rem;white-space:nowrap"><span class="brp-sep">Paying:</span> <span class="brp-range">$${rr.min}</span><span class="brp-sep">&ndash;</span><span class="brp-range">$${rr.max}</span></div></div>`;
