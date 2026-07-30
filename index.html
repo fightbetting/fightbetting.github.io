@@ -501,8 +501,8 @@ function renderAdPage(){
       <div style="font-size:.5rem;text-transform:uppercase;letter-spacing:3px;color:var(--dim);margin-bottom:10px;text-align:center">How the Pool Works</div>
       <div style="display:grid;grid-template-columns:24px 1fr;gap:8px;font-size:.72rem;color:var(--dim);line-height:1.5">
         <span style="color:var(--gold);font-weight:700;text-align:center">1</span><span>Pick a fighter and put cash in the pool. <strong style="color:var(--text)">Minimum $1 bet, whole dollars only.</strong></span>
-        <span style="color:var(--gold);font-weight:700;text-align:center">2</span><span>Watch the fights. If your fighter wins, <strong style="color:var(--text)">you get your stake back</strong> plus a share of the pot.</span>
-        <span style="color:var(--gold);font-weight:700;text-align:center">3</span><span>Underdog wins pay more. Favorites pay less. <strong style="color:var(--text)">All money paid in is paid out</strong> &mdash; no house cut, no fees.</span>
+        <span style="color:var(--gold);font-weight:700;text-align:center">2</span><span>If your fighter wins, <strong style="color:var(--text)">you win cash based on the odds</strong>. Bet $5 on a 5x underdog and win $25.</span>
+        <span style="color:var(--gold);font-weight:700;text-align:center">3</span><span>The bigger the underdog, the more you win. <strong style="color:var(--text)">All money paid in is paid out</strong> &mdash; no house cut, no fees.</span>
         <span style="color:var(--gold);font-weight:700;text-align:center">4</span><span>Payouts are rounded to whole dollars so we use <strong style="color:var(--text)">physical cash &mdash; no coins.</strong></span>
       </div>
     </div>
@@ -511,6 +511,29 @@ function renderAdPage(){
     <div style="background:linear-gradient(135deg,var(--card),rgba(240,180,41,.04));border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;text-align:center">
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:700;color:var(--gold);margin-bottom:4px">Bring Cash</div>
       <p style="font-size:.75rem;color:var(--dim);line-height:1.5">Recommended max bet is <strong style="color:var(--text)">$10</strong> so the pool stays fair for everyone. The more people who bet, the bigger the payouts.</p>
+    </div>
+
+    <!-- How the Math Works (collapsible) -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden">
+      <details style="cursor:pointer">
+        <summary style="padding:14px 16px;font-size:.75rem;font-weight:600;color:var(--gold);list-style:none;display:flex;justify-content:space-between;align-items:center">
+          <span>How the math works</span>
+          <span style="font-size:.6rem;color:var(--dim)">tap to expand</span>
+        </summary>
+        <div style="padding:0 16px 14px;font-size:.68rem;color:var(--dim);line-height:1.7;border-top:1px solid var(--border);padding-top:10px">
+          <p><strong style="color:var(--text)">Payout = Bet &times; Odds Multiplier</strong></p>
+          <p>The odds multiplier comes from the fighter's win probability:</p>
+          <p style="padding:6px 0 6px 10px;font-family:monospace;font-size:.65rem">Multiplier = 1 / (Win% / 100)</p>
+          <p>Example: 20% fighter = 1 / 0.20 = <strong style="color:var(--gold)">5.0x</strong>.  A $5 bet wins $25.</p>
+          <p style="margin-top:8px">But the actual payout depends on the whole pool:</p>
+          <p style="padding:6px 0 0 10px">&bull; Everyone's cash goes into one pot</p>
+          <p style="padding:2px 0 0 10px">&bull; Winners split the pot by their odds</p>
+          <p style="padding:2px 0 0 10px">&bull; Underdogs get a bigger slice</p>
+          <p style="padding:2px 0 0 10px">&bull; If the pot is short, payouts scale down</p>
+          <p style="padding:2px 0 0 10px">&bull; If there's extra cash, winners get a bonus</p>
+          <p style="margin-top:8px">The calculator on fight night shows your estimated range.</p>
+        </div>
+      </details>
     </div>
 
     <!-- Live Status -->
