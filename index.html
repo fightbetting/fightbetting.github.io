@@ -326,6 +326,14 @@ function modalFightChange(){
   document.getElementById('modalAmount').value=5;
   document.getElementById('modalResults').style.display='none';
   document.getElementById('modalWarnings').innerHTML='';
+  // auto-select fighter A so Calculate button works
+  modalState.pick='A';
+  const a=document.getElementById('modalPickA'),b=document.getElementById('modalPickB');
+  if(a){
+    const ca=modalState.colA,cb=modalState.colB;
+    a.style.borderColor=ca; a.style.background=ca+'22';
+    b.style.borderColor='var(--border)'; b.style.background='var(--bg)';
+  }
 }
 function modalPick(side){
   modalState.pick=side;
@@ -335,7 +343,6 @@ function modalPick(side){
   a.style.background=side==='A'?ca+'22':'var(--bg)';
   b.style.borderColor=side==='B'?cb:'var(--border)';
   b.style.background=side==='B'?cb+'22':'var(--bg)';
-  modalCalc();
 }
 function modalCalc(){
   if(!modalState.pick){document.getElementById('modalResults').style.display='none';return;}
