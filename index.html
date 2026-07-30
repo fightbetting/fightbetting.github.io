@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fight Night Pool — Live</title>
+    <style>
+        :root {
+            --bg: #121212; --surface: #1e1e1e; --primary: #bb86fc;
+            --text: #e0e0e0; --text-muted: #a0a0a0; --success: #03dac6;
+            --danger: #cf6679; --border: #333; --bonus: #f6d365;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg); color: var(--text); padding: 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 20px; }
+        header h1 { color: var(--primary); text-transform: uppercase; letter-spacing: 2px; font-size: 1.6rem; }
+        .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
+        .pot {
+            background: var(--surface); border: 1px solid rgba(3, 218, 198, 0.3);
+            border-radius: 8px; padding: 30px; text-align: center; margin-bottom: 20px;
+        }
+        .pot h2 { font-size: 3.5rem; color: var(--success); font-family: monospace; margin: 0; }
+        .pot .label { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 8px; padding: 20px; margin-bottom: 20px;
+        }
+        .card h3 { color: var(--primary); margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .fight-row {
+            padding: 12px 0; border-bottom: 1px solid var(--border);
+        }
+        .fight-row:last-child { border-bottom: none; }
+        .fight-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+        }
+        .fight-name { font-weight: bold; }
+        .fight-status { font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; }
+        .status-pending { color: var(--text-muted); border: 1px solid var(--border); }
+        .status-won { color: var(--success); border: 1px solid rgba(3, 218, 198, 0.3); }
+        .status-refund { color: var(--bonus); border: 1px solid rgba(246, 211, 101, 0.3); }
+        .fight-bets { display: flex; gap: 20px; }
+        .fighter-stat { flex: 1; }
+        .fighter-stat .name { font-weight: bold; font-size: 0.95rem; }
+        .fighter-stat .count { font-size: 0.85rem; color: var(--text-muted); }
+        .bar-bg { background: #333; border-radius: 4px; height: 20px; margin-top: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+        .bar-a { background: var(--primary); }
+        .bar-b { background: var(--bonus); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid var(--border); padding: 10px; text-align: left; }
+        th { background: #252525; color: var(--text-muted); font-weight: normal; font-size: 0.85rem; }
+        .profit { color: var(--success); font-weight: bold; }
+        .loss { color: var(--danger); }
+        .neutral { color: var(--text-muted); }
+        .loading { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .loading .spinner { font-size: 2rem; margin-bottom: 10px; animation: pulse 1.5s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        .zero-state { text-align: center; padding: 40px; color: var(--text-muted); font-size: 1.1rem; }
+        .error-state { text-align: center; padding: 40px; color: var(--danger); }
+        .config-needed { text-align: center; padding: 40px; color: var(--bonus); }
+        .config-needed code { background: #333; padding: 2px 6px; border-radius: 3px; }
+        .setup-steps {
+            text-align: left; max-width: 500px; margin: 20px auto;
+            color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;
+        }
+        .setup-steps ol { margin-left: 20px; }
+        .setup-steps code { background: #333; padding: 1px 5px; border-radius: 3px; color: var(--primary); }
+        footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Fight Night Pool</h1>
+        <p class="subtitle" id="updateTime">Waiting for data...</p>
+    </header>
+
+    <div class="pot">
+        <div class="label">Total Cash in the Pool</div>
+        <h2 id="totalPool">—</h2>
+    </div>
+
+    <div class="card" id="fightsCard">
+        <h3>Fights &amp; Bets</h3>
+        <div id="fightsContainer">
+            <div class="loading"><div class="spinner">&#9203;</div>Loading fights...</div>
+        </div>
+    </div>
+
+    <div class="card" id="bettorsCard">
+        <h3>Bettors</h3>
+        <div id="bettorsContainer">
+            <div class="loading"><div class="spinner">&#9203;</div>Loading bettors...</div>
+        </div>
+    </div>
+
+    <footer>Data updates every 15 seconds</footer>
+</div>
+
+<script>
+    // ═══════════════════════════════════════════════════════════════
+    //  SETUP: Paste your Supabase URL and Anon Key below.
+    //  Find them at: supabase.com → Project → Settings → API
+    // ═══════════════════════════════════════════════════════════════
+    const SUPABASE_URL = 'https://vcstmrxydvubjpfcdsay.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZjc3Rtcnh5ZHZ1YmpwZmNkc2F5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzODI1MjQsImV4cCI6MjEwMDk1ODUyNH0.cya1MnU-NwptBLao7oMLoecK2mvuu7e4uPWstkLrRzw';
+
+    // ── Data Fetching ─────────────────────────────────────────────
+    async function loadData() {
+        if (SUPABASE_URL.includes('YOUR_PROJECT')) {
+            document.getElementById('fightsContainer').innerHTML =
+                '<div class="config-needed">' +
+                '<p style="font-size:1.2rem;margin-bottom:10px;">&#9888; Supabase not configured</p>' +
+                '<div class="setup-steps">' +
+                '<ol>' +
+                '<li>Create a free project at <strong>supabase.com</strong></li>' +
+                '<li>Run this SQL in the SQL Editor:</li>' +
+                '</ol>' +
+                '<pre style="background:#252525;padding:12px;border-radius:4px;overflow-x:auto;font-size:0.8rem;">' +
+                'CREATE TABLE pool_state (\n' +
+                '  id int4 PRIMARY KEY DEFAULT 1,\n' +
+                '  data jsonb NOT NULL DEFAULT \'{}\'::jsonb,\n' +
+                '  updated_at timestamptz NOT NULL DEFAULT now()\n' +
+                ');\n' +
+                'INSERT INTO pool_state (id, data) VALUES (1, \'{}\'::jsonb);\n' +
+                'ALTER TABLE pool_state ENABLE ROW LEVEL SECURITY;\n' +
+                'CREATE POLICY "anon all" ON pool_state FOR ALL USING (true) WITH CHECK (true);' +
+                '</pre>' +
+                '<ol start="3">' +
+                '<li>Copy your <strong>Project URL</strong> and <strong>anon key</strong> from Settings → API</li>' +
+                '<li>Paste them into the <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> variables at the top of this file</li>' +
+                '<li>Save and push to GitHub</li>' +
+                '</ol>' +
+                '</div></div>';
+            document.getElementById('bettorsContainer').innerHTML = '';
+            document.getElementById('totalPool').textContent = '—';
+            return;
+        }
+
+        try {
+            const resp = await fetch(
+                SUPABASE_URL + '/rest/v1/pool_state?id=eq.1&select=data',
+                {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                    }
+                }
+            );
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const rows = await resp.json();
+            if (!rows || rows.length === 0) throw new Error('No data');
+            render(rows[0].data);
+        } catch (e) {
+            document.getElementById('fightsContainer').innerHTML =
+                '<div class="error-state">Could not load data: ' + e.message + '<br>Waiting for admin to publish...</div>';
+            document.getElementById('bettorsContainer').innerHTML = '';
+            document.getElementById('totalPool').textContent = '?';
+        }
+    }
+
+    // ── Rendering ─────────────────────────────────────────────────
+    function render(data) {
+        document.getElementById('updateTime').textContent =
+            'Last updated: ' + (data.updatedAt ? new Date(data.updatedAt).toLocaleString() : 'N/A');
+
+        document.getElementById('totalPool').textContent = '$' + (data.totalPool || 0);
+
+        // Fights
+        const fc = document.getElementById('fightsContainer');
+        const bets = data.bets || [];
+        const fights = data.fights || [];
+
+        if (fights.length === 0) {
+            fc.innerHTML = '<div class="zero-state">No fights configured yet.</div>';
+        } else {
+            let html = '';
+            fights.forEach(f => {
+                const fb = bets.filter(b => b.fightId === f.id);
+                const aBets = fb.filter(b => b.fighter === 'A');
+                const bBets = fb.filter(b => b.fighter === 'B');
+                const total = aBets.length + bBets.length || 1;
+                const aPct = (aBets.length / total * 100);
+                const bPct = (bBets.length / total * 100);
+                const a$ = aBets.reduce((s, b) => s + b.amount, 0);
+                const b$ = bBets.reduce((s, b) => s + b.amount, 0);
+
+                let statusClass = 'status-pending', statusText = 'Pending';
+                if (f.status === 'A') { statusClass = 'status-won'; statusText = f.nameA + ' won'; }
+                else if (f.status === 'B') { statusClass = 'status-won'; statusText = f.nameB + ' won'; }
+                else if (f.status === 'refund') { statusClass = 'status-refund'; statusText = 'Draw / Refund'; }
+
+                html += '<div class="fight-row">';
+                html += '<div class="fight-header">';
+                html += '<span class="fight-name">' + (f.matchup || f.nameA + ' vs ' + f.nameB) + '</span>';
+                html += '<span class="fight-status ' + statusClass + '">' + statusText + '</span>';
+                html += '</div>';
+                html += '<div class="fight-bets">';
+                html += '<div class="fighter-stat">';
+                html += '<div class="name">' + f.nameA + '</div>';
+                html += '<div class="count">' + aBets.length + ' bet(s) \u2014 $' + a$ + '</div>';
+                html += '<div class="bar-bg"><div class="bar-fill bar-a" style="width:' + aPct + '%"></div></div>';
+                html += '</div>';
+                html += '<div class="fighter-stat">';
+                html += '<div class="name">' + f.nameB + '</div>';
+                html += '<div class="count">' + bBets.length + ' bet(s) \u2014 $' + b$ + '</div>';
+                html += '<div class="bar-bg"><div class="bar-fill bar-b" style="width:' + bPct + '%"></div></div>';
+                html += '</div>';
+                html += '</div></div>';
+            });
+            fc.innerHTML = html;
+        }
+
+        // Bettors
+        const bc = document.getElementById('bettorsContainer');
+        const bettors = data.bettors || [];
+        if (bettors.length === 0) {
+            bc.innerHTML = '<div class="zero-state">No bets placed yet.</div>';
+        } else {
+            let table = '<table><tr><th>Name</th><th>Paid In</th><th>Won</th><th>Net</th></tr>';
+            bettors.forEach(b => {
+                const cls = b.net > 0 ? 'profit' : (b.net < 0 ? 'loss' : 'neutral');
+                const sign = b.net > 0 ? '+' : '';
+                table += '<tr><td><strong>' + b.name + '</strong></td>' +
+                         '<td>$' + b.paid + '</td>' +
+                         '<td class="' + cls + '">$' + b.won + '</td>' +
+                         '<td class="' + cls + '"><strong>' + sign + '$' + b.net + '</strong></td></tr>';
+            });
+            table += '</table>';
+            bc.innerHTML = table;
+        }
+    }
+
+    // ── Boot ──────────────────────────────────────────────────────
+    loadData();
+    setInterval(loadData, 15000);
+</script>
+</body>
+</html>
