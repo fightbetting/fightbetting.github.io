@@ -10,94 +10,92 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0d0d14;--card:#14141f;--border:#1e1e2d;--text:#e2e2ea;--dim:#6b6b80;--gold:#f0b429;--green:#22c55e}
 html{font-size:16px}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 .container{max-width:560px;margin:0 auto;padding:12px 10px 32px}
 
-/* hero */
 .h-box{text-align:center;padding:24px 12px 20px;margin-bottom:10px}
-.h-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:3px;color:var(--dim);margin-bottom:2px}
+.h-label{font-size:.6rem;text-transform:uppercase;letter-spacing:3px;color:var(--dim);margin-bottom:2px}
 .h-pool{font-family:'Barlow Condensed',sans-serif;font-size:clamp(3rem,14vw,5rem);line-height:1;font-weight:900;color:var(--gold);letter-spacing:-1px}
-.h-meta{display:flex;justify-content:center;gap:16px;margin-top:6px;font-size:0.7rem;color:var(--dim)}
+.h-meta{display:flex;justify-content:center;gap:16px;margin-top:6px;font-size:.7rem}
 .h-meta span{display:flex;align-items:center;gap:3px}
 .dot{width:6px;height:6px;border-radius:50%;display:inline-block}
-.dot-on{background:var(--green);box-shadow:0 0 6px var(--green)}
-.dot-off{background:#ef4444}
+.dot-on{background:var(--green);box-shadow:0 0 6px var(--green)}.dot-off{background:#ef4444}
 
-/* quick stats */
-.qs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
-.qs div{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 4px;text-align:center}
-.qs .qn{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;line-height:1.2}
-.qs .ql{font-size:0.5rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-top:1px}
+.qs{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px;margin-bottom:10px}
+.qs .qs-cell{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 4px;text-align:center}
+.qs .qn{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;line-height:1.2;color:var(--text)}
+.qs .ql{font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-top:1px}
 
-/* bettor strip */
-.bs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;margin-bottom:6px;-webkit-overflow-scrolling:touch}
+.bs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;margin-bottom:6px}
 .bs::-webkit-scrollbar{display:none}
 .bm{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 10px;min-width:80px;text-align:center}
-.bm .bi{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 3px;font-weight:700;font-size:0.65rem;color:#fff}
-.bm .bn{font-size:0.6rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bm .bi{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 3px;font-weight:700;font-size:.65rem;color:#fff}
+.bm .bn{font-size:.6rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bm .bv{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700}
 .g{color:var(--green)}.w{color:var(--gold)}.n{color:var(--dim)}
 
-/* fight card */
 .fc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 12px;margin-bottom:10px}
 .fc-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.fc-h .fc-t{font-size:0.55rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim)}
-.fc-h .fc-q{font-size:0.6rem;color:var(--dim);background:rgba(255,255,255,0.03);padding:2px 8px;border-radius:12px;border:1px solid var(--border)}
-.fc-bad{font-size:0.55rem;padding:2px 8px;border-radius:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
-.bad-p{background:rgba(255,255,255,0.03);color:var(--dim);border:1px solid var(--border)}
-.bad-w{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2)}
+.fc-h .fc-t{font-size:.55rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim)}
+.fc-h .fc-q{font-size:.6rem;color:var(--dim);background:rgba(255,255,255,.03);padding:2px 8px;border-radius:12px;border:1px solid var(--border)}
+.fc-bad{font-size:.55rem;padding:2px 8px;border-radius:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.bad-p{background:rgba(255,255,255,.03);color:var(--dim);border:1px solid var(--border)}
+.bad-w{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
 
 .fc-f{display:grid;grid-template-columns:1fr auto 1fr;gap:4px;align-items:center;margin-bottom:8px}
 .fc-f .ff{text-align:center}
-.fc-f .ff .fn{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;line-height:1.1}
-.fc-f .ff .fo{font-size:0.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px}
-.fc-f .ff .fd{font-size:0.7rem;font-weight:600;margin-top:1px}
-.fc-v{font-size:0.5rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim)}
+.fc-f .ff .fn{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;line-height:1.1;color:var(--text)}
+.fc-f .ff .fo{font-size:.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.fc-f .ff .fd{font-size:.7rem;font-weight:600;margin-top:1px}
+.fc-v{font-size:.5rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim)}
 
-/* bar */
 .fc-bar{margin-bottom:8px}
-.fc-bar .bar{display:flex;height:20px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,0.03)}
-.fc-bar .bar .s{transition:width .8s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:700;color:#fff;min-width:0;overflow:hidden;white-space:nowrap}
-.fc-tot{text-align:center;font-size:0.6rem;color:var(--dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
-.fc-tot b{font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;color:var(--text);font-weight:700;letter-spacing:0}
+.bar{display:flex;height:20px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.03)}
+.bar .s{transition:width .8s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:#fff;min-width:0;overflow:hidden;white-space:nowrap}
+.fc-tot{text-align:center;font-size:.6rem;color:var(--dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.fc-tot b{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;color:var(--text);font-weight:700}
 
-/* svg pie */
-.fc-pie-wrap{display:flex;justify-content:center;margin-bottom:10px}
-.fc-pie-wrap svg{width:130px;height:130px}
+.pie-legend-wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-bottom:8px}
+.legend-col{font-size:.6rem;flex:1;min-width:140px}
+.legend-header{display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.ld-dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.ld-dot.sm{width:5px;height:5px}
+.ld-amt{margin-left:auto;color:var(--text);font-weight:600}
+.legend-row{display:flex;align-items:center;gap:4px;padding:1px 0 1px 10px}
+.ld-name{color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ld-val{font-weight:600}
 
-/* bettor rows per fight */
 .fc-b{border-top:1px solid var(--border);padding-top:8px}
-.fc-b .b-title{font-size:0.55rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:4px}
-.br{display:grid;grid-template-columns:1fr 50px 60px;gap:2px;padding:4px 0;font-size:0.7rem;align-items:center;border-bottom:1px solid rgba(255,255,255,0.02)}
+.fc-b .b-title{font-size:.55rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:4px}
+.fc-b .b-title-sub{font-weight:400;text-transform:none;letter-spacing:0;color:var(--dim)}
+.br{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:5px 0;font-size:.7rem;align-items:center;border-bottom:1px solid rgba(255,255,255,.02)}
 .br:last-child{border-bottom:none}
 .br .bri{display:flex;align-items:center;gap:4px}
-.br .bri .bri-d{width:16px;height:16px;border-radius:50%;display:inline-block;flex-shrink:0}
-.br .brr{text-align:right;font-size:0.6rem;color:var(--dim)}
-.br .brp{text-align:right;font-weight:600;font-size:0.65rem}
-.br .brr2{text-align:right;font-size:0.55rem;color:var(--dim);grid-column:3}
+.br .bri .bri-d{width:14px;height:14px;border-radius:50%;display:inline-block;flex-shrink:0}
+.br .brr{text-align:right;font-size:.6rem;color:var(--text);font-weight:500}
+.br .brp{text-align:right;font-weight:600;font-size:.65rem;white-space:nowrap}
+.brp-pred{color:var(--green);font-weight:700}
+.brp-sep{color:var(--dim);padding:0 2px}
+.brp-range{color:var(--gold);font-weight:700}
 
-/* ledger */
 .lc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 12px;margin-bottom:10px}
-.lc .lt{font-size:0.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-bottom:8px}
-.lr{display:grid;grid-template-columns:1fr 44px 44px 50px;gap:2px;padding:5px 2px;font-size:0.7rem;align-items:center;border-bottom:1px solid rgba(255,255,255,0.02)}
-.lr:last-child{border-bottom:none}
-.lh{color:var(--dim);font-size:0.5rem;text-transform:uppercase;letter-spacing:1px;padding:4px 2px;border-bottom:1px solid var(--border)}
+.lc .lt{font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-bottom:8px}
+.lr{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;padding:6px 2px;font-size:.7rem;align-items:center;border-bottom:1px solid rgba(255,255,255,.02)}
+.lr:last-child{border-bottom:none}.lh{color:var(--dim);font-size:.5rem;text-transform:uppercase;letter-spacing:1px;padding:4px 2px;border-bottom:1px solid var(--border)}
 .ln{font-weight:500;display:flex;align-items:center;gap:4px}
-.ln .ld{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.5rem;font-weight:700;color:#fff;flex-shrink:0}
-.lp{text-align:right;color:var(--dim)}
-.lw{text-align:right;font-weight:600}
-.lv{text-align:right;font-weight:700}
+.ln .ld{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;color:#fff;flex-shrink:0}
+.lp{text-align:right;color:var(--text)}.lw{text-align:right;font-weight:600;color:var(--text)}.lv{text-align:right;font-weight:700}
 .gc{color:var(--green)}.wc{color:var(--gold)}.nc{color:var(--dim)}.rc{color:#ef4444}
 
-/* empty/offline */
 .empty{text-align:center;padding:60px 20px;color:var(--dim)}
 .empty .ei{font-size:2.5rem;margin-bottom:10px;opacity:.4}
 .off{text-align:center;padding:80px 20px}
 .off .ei{font-size:3.5rem;margin-bottom:12px;opacity:.4}
-.off h2{color:var(--dim);font-size:1.1rem;font-weight:400;margin-bottom:4px}
-.off p{color:var(--dim);font-size:0.8rem;opacity:.6}
+.off h2{font-size:1.1rem;font-weight:400;margin-bottom:4px;color:var(--text)}
+.off p{color:var(--dim);font-size:.8rem;opacity:.6}
+.empty-fight{text-align:center;color:var(--dim);font-size:.75rem;padding:8px 0}
 
-footer{text-align:center;font-size:0.5rem;color:var(--dim);padding:16px 0;text-transform:uppercase;letter-spacing:2px}
+footer{text-align:center;font-size:.5rem;color:var(--dim);padding:16px 0;text-transform:uppercase;letter-spacing:2px}
 </style>
 </head>
 <body>
@@ -107,101 +105,100 @@ footer{text-align:center;font-size:0.5rem;color:var(--dim);padding:16px 0;text-t
 const SUPABASE_URL='https://vcstmrxydvubjpfcdsay.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_UF-hirQu6vhdEjUCNplR2A_9fKeYbj_';
 
-// fighter colors hardcoded
-const FCOLORS={
-  christian:'#2563eb',julia:'#fb7185',aliya:'#a855f7',marissa:'#ec4899',
-  yes:'#22c55e',no:'#ef4444'
-};
+const FCOLORS={christian:'#2563eb',julia:'#fb7185',aliya:'#a855f7',marissa:'#ec4899',yes:'#22c55e',no:'#ef4444'};
 function fcolor(n){
   const k=n.toLowerCase();
   if(FCOLORS[k])return FCOLORS[k];
-  // fallback hash
   let h=0;for(let i=0;i<n.length;i++)h=n.charCodeAt(i)+((h<<5)-h);
   return['#2563eb','#fb7185','#a855f7','#ec4899','#22c55e','#ef4444','#f59e0b','#06b6d4'][Math.abs(h)%8];
 }
-
-// unique bettor colors via golden-angle HSL — never duplicates
 function bettorColor(n){
   let h=0;for(let i=0;i<n.length;i++)h=n.charCodeAt(i)+((h<<5)-h);
-  h=Math.abs(h);
-  const hue=(h*137.508)%360;
-  const sat=72+(h%20);
-  const lit=48+(Math.floor(h/7)%14);
-  return 'hsl('+hue+','+sat+'%,'+lit+'%)';
+  h=Math.abs(h);return 'hsl('+((h*137.508)%360)+','+(72+(h%20))+'%,'+(48+(Math.floor(h/7)%14))+'%)';
 }
-
-// conservative estimate (same as app)
 function estWin(amt,prob){
-  const w=1/(prob/100);
-  const raw=amt*w;
+  const w=1/(prob/100),raw=amt*w;
   let r;
   if(w<1.5)r=Math.floor(Math.max(raw,amt*1.4));
-  else{let d=0.85;if(w>2)d=Math.max(0.6,0.85-(w-2)*0.05);r=Math.floor(raw*d);}
-  if(amt<=3)r=Math.max(r,amt+1);
-  if(r<1)r=0;
-  return r;
+  else{let d=.85;if(w>2)d=Math.max(.6,.85-(w-2)*.05);r=Math.floor(raw*d);}
+  if(amt<=3)r=Math.max(r,amt+1);return r<1?0:r;
 }
-
-// compute per-bettor payout range across all possible fight outcomes
 function computeRanges(bets,fights){
-  const pending=fights.filter(f=>f.status==='pending');
-  const rangeMap={};
-  // group bets by bettor
-  const byBettor={};
-  bets.forEach(b=>{
-    if(!byBettor[b.bettor])byBettor[b.bettor]=[];
-    byBettor[b.bettor].push(b);
-  });
-  Object.keys(byBettor).forEach(name=>{
-    const bs=byBettor[name];
-    // collect pending fight IDs this bettor has bets on
-    const pf=[];const pfSet=new Set();
-    bs.forEach(b=>{
-      const f=fights.find(x=>x.id===b.fightId);
-      if(f&&f.status==='pending'&&!pfSet.has(b.fightId)){pf.push(f);pfSet.add(b.fightId);}
-    });
-    const n=pf.length;
-    let min=Infinity,max=-Infinity,est=0;
-    // current estimate based on current statuses
-    bs.forEach(b=>{
-      const f=fights.find(x=>x.id===b.fightId);
-      const prob=b.fighter==='A'?f.probA:f.probB;
-      if(f.status===b.fighter)est+=estWin(b.amount,prob);
-      else if(f.status==='refund')est+=b.amount;
-      // pending=0 for current estimate
-    });
-    // try all 2^n outcome combinations for pending fights
-    if(n===0){
-      min=est;max=est;
-    }else{
-      for(let mask=0;mask<(1<<n);mask++){
-        let total=0;
-        bs.forEach(b=>{
-          const f=fights.find(x=>x.id===b.fightId);
-          const prob=b.fighter==='A'?f.probA:f.probB;
-          if(f.status===b.fighter)total+=estWin(b.amount,prob);
-          else if(f.status==='refund')total+=b.amount;
-          else if(f.status==='pending'){
-            // find which pending index this fight is
-            const idx=pf.findIndex(p=>p.id===f.id);
-            const wins=!!(mask&(1<<idx));
-            if(wins)total+=estWin(b.amount,prob);
-          }
-        });
-        if(total<min)min=total;
-        if(total>max)max=total;
-      }
-    }
-    rangeMap[name]={min:Math.round(min)||0,max:Math.round(max)||0,est:Math.round(est)||0};
-  });
-  return rangeMap;
+  const rm={},by={};
+  bets.forEach(b=>{(by[b.bettor]=by[b.bettor]||[]).push(b);});
+  Object.keys(by).forEach(n=>{
+    const bs=by[n],pf=[];const ps=new Set();
+    bs.forEach(b=>{const f=fights.find(x=>x.id===b.fightId);if(f&&f.status==='pending'&&!ps.has(b.fightId)){pf.push(f);ps.add(b.fightId);}});
+    let min=Infinity,max=-Infinity,e=0;
+    bs.forEach(b=>{const f=fights.find(x=>x.id===b.fightId),p=b.fighter==='A'?f.probA:f.probB;if(f.status===b.fighter)e+=estWin(b.amount,p);else if(f.status==='refund')e+=b.amount;});
+    if(pf.length===0){min=e;max=e;}
+    else{for(let m=0;m<(1<<pf.length);m++){let t=0;bs.forEach(b=>{const f=fights.find(x=>x.id===b.fightId),p=b.fighter==='A'?f.probA:f.probB;if(f.status===b.fighter)t+=estWin(b.amount,p);else if(f.status==='refund')t+=b.amount;else if(f.status==='pending'){const i=pf.findIndex(x=>x.id===f.id);if(m&(1<<i))t+=estWin(b.amount,p);}});if(t<min)min=t;if(t>max)max=t;}}
+    rm[n]={min:Math.round(min)||0,max:Math.round(max)||0,est:Math.round(e)||0};
+  });return rm;
 }
-
+function renderHero(pool,bettors,tickets,avg){
+  return `<div class="h-box"><div class="h-label">Total Cash in the Pool</div><div class="h-pool">$${pool}</div><div class="h-meta"><span><span class="dot dot-on"></span>Live</span><span>${bettors} bettor${bettors!==1?'s':''}</span><span>${tickets} ticket${tickets!==1?'s':''}</span><span>$${avg} avg</span></div></div>`;
+}
+function renderStatsRow(fs,bs){
+  const bf=fs.reduce((m,f)=>f.fT>m.fT?f:m,fs[0]||{fT:0}),mb=fs.reduce((m,f)=>(f.ac+f.bc)>(m.ac+m.bc)?f:m,fs[0]||{ac:0,bc:0});
+  const bb=bs.reduce((m,b)=>b.paid>(m.paid||0)?b:m,bs[0]||{}),tp=bs.reduce((s,b)=>s+Math.abs(b.net||0),0);
+  return `<div class="qs"><div class="qs-cell"><div class="qn" style="color:${bettorColor(bb.name||'?')}">${bb.name||'-'}</div><div class="ql">Top Bettor</div></div><div class="qs-cell"><div class="qn">${bf.fT||0}</div><div class="ql">Biggest $</div></div><div class="qs-cell"><div class="qn">${mb.ac+mb.bc||0}</div><div class="ql">Most Bets</div></div><div class="qs-cell"><div class="qn">$${tp}</div><div class="ql">Total P/L</div></div></div>`;
+}
+function renderBettorStrip(bs){
+  if(!bs.length)return'';
+  const s=[...bs].sort((a,b)=>b.paid-a.paid);
+  return '<div class="bs">'+s.map(b=>{const dc=b.net>0?'g':(b.net<0?'n':'n'),sg=b.net>0?'+':'';return`<div class="bm"><div class="bi" style="background:${bettorColor(b.name)}">${b.name.charAt(0).toUpperCase()}</div><div class="bn">${b.name}</div><div class="bv ${dc}">${sg}$${Math.abs(b.net)}</div></div>`;}).join('')+'</div>';
+}
+function renderFightCard(fs,rm){
+  const f=fs.f,ac=fcolor(f.nameA),bc=fcolor(f.nameB),q=f.id===3?'Survives the round?':'Who wins?';
+  let badge='<span class="bad-p">Pending</span>';
+  if(f.status==='A')badge='<span class="bad-w">'+f.nameA+' Won</span>';
+  else if(f.status==='B')badge='<span class="bad-w" style="border-color:rgba(240,180,41,.2);color:var(--gold);background:rgba(240,180,41,.1)">'+f.nameB+' Won</span>';
+  else if(f.status==='refund')badge='<span class="bad-p">Draw / Refund</span>';
+  let h=`<div class="fc"><div class="fc-h"><span class="fc-t">Fight ${f.id}</span><span class="fc-q">${q}</span>${badge}</div><div class="fc-f"><div class="ff"><div class="fn" style="color:${ac}">${f.nameA}</div><div class="fo">${f.probA}%</div><div class="fd" style="color:${ac}">$${fs.aT}</div></div><div class="fc-v">vs</div><div class="ff"><div class="fn" style="color:${bc}">${f.nameB}</div><div class="fo">${f.probB}%</div><div class="fd" style="color:${bc}">$${fs.bT}</div></div></div>`;
+  if(fs.fT>0){
+    const ap=Math.max(fs.aP,3),bp=Math.max(fs.bP,3);
+    h+=`<div class="fc-tot">Total on this fight: <b>$${fs.fT}</b></div><div class="fc-bar"><div class="bar">`;
+    if(fs.aT>0)h+=`<div class="s" style="width:${ap}%;background:${ac}">${fs.aP>12?'$'+fs.aT:''}</div>`;
+    if(fs.bT>0)h+=`<div class="s" style="width:${bp}%;background:${bc}">${fs.bP>12?'$'+fs.bT:''}</div>`;
+    h+=`</div></div>`;
+    const aB=[...fs.ab].sort((a,b)=>b.amount-a.amount),bB=[...fs.bb].sort((a,b)=>b.amount-a.amount);
+    const cx=65,cy=65,R=58;let ca=-90;
+    let slices=[];aB.forEach(b=>slices.push({...b,col:bettorColor(b.bettor)}));bB.forEach(b=>slices.push({...b,col:bettorColor(b.bettor)}));
+    let svg=`<svg viewBox="0 0 130 130" width="130" height="130">`;
+    slices.forEach(s=>{const a=fs.fT?(s.amount/fs.fT)*360:0;if(!a)return;const sr=(ca*Math.PI)/180,er=((ca+a)*Math.PI)/180;svg+=`<path d="M${cx} ${cy} L${cx+R*Math.cos(sr)} ${cy+R*Math.sin(sr)} A${R} ${R} 0 ${a>180?1:0} 1 ${cx+R*Math.cos(er)} ${cy+R*Math.sin(er)} Z" fill="${s.col}" opacity=".85" stroke="#14141f" stroke-width="1"/>`;ca+=a;});
+    const tc=aB.length+bB.length;
+    svg+=`<circle cx="${cx}" cy="${cy}" r="22" fill="#14141f"/><text x="${cx}" y="${cy-3}" text-anchor="middle" fill="#e2e2ea" font-size="16" font-weight="800" font-family="'Barlow Condensed',sans-serif">${tc}</text><text x="${cx}" y="${cy+12}" text-anchor="middle" fill="#6b6b80" font-size="8">bets</text></svg>`;
+    h+=`<div class="pie-legend-wrap">${svg}<div class="legend-col"><div class="legend-header"><span class="ld-dot" style="background:${ac}"></span><b style="color:${ac}">${f.nameA}</b><span class="ld-amt">$${fs.aT}</span></div>`;
+    aB.forEach(b=>{const c=bettorColor(b.bettor);h+=`<div class="legend-row"><span class="ld-dot sm" style="background:${c}"></span><span class="ld-name">${b.bettor}</span><span class="ld-val">$${b.amount}</span></div>`;});
+    h+=`<div class="legend-header" style="margin-top:4px"><span class="ld-dot" style="background:${bc}"></span><b style="color:${bc}">${f.nameB}</b><span class="ld-amt">$${fs.bT}</span></div>`;
+    bB.forEach(b=>{const c=bettorColor(b.bettor);h+=`<div class="legend-row"><span class="ld-dot sm" style="background:${c}"></span><span class="ld-name">${b.bettor}</span><span class="ld-val">$${b.amount}</span></div>`;});
+    h+=`</div></div><div class="fc-b"><div class="b-title">Bettor Breakdown <span class="b-title-sub">predicted / total range</span></div>`;
+    [...slices].sort((a,b)=>b.amount-a.amount).forEach(b=>{
+      const prob=b.side==='A'?f.probA:f.probB,p=estWin(b.amount,prob),rr=rm[b.bettor]||{min:0,max:0},c=bettorColor(b.bettor);
+      h+=`<div class="br"><div class="bri"><span class="bri-d" style="background:${c}"></span>${b.bettor}</div><div class="brr">$${b.amount}</div><div class="brp"><span class="brp-pred">~$${p}</span><span class="brp-sep">|</span><span class="brp-range">${rr.min}-${rr.max}</span></div></div>`;
+    });
+    h+='</div>';
+  }else h+='<div class="empty-fight">No bets on this fight yet</div>';
+  return h+'</div>';
+}
+function renderLedger(bs,ar){
+  if(!bs.length)return'<div class="lc"><div class="lt">No bets placed yet — pool is empty.</div></div>';
+  let h=`<div class="lc"><div class="lt">All Bettors</div><div class="lr lh"><div class="ln">Name</div><div class="lp">Paid</div><div class="lw">Won</div><div class="lv">Net</div></div>`;
+  bs.forEach(b=>{let nc='nc';if(ar){if(b.net>0)nc='gc';else if(b.net<0)nc='rc';}else if(b.net>0)nc='wc';const sg=b.net>0?'+':'',c=bettorColor(b.name);h+=`<div class="lr"><div class="ln"><span class="ld" style="background:${c}">${b.name.charAt(0).toUpperCase()}</span>${b.name}</div><div class="lp">$${b.paid}</div><div class="lw gc">$${b.won}</div><div class="lv ${nc}">${sg}$${Math.abs(b.net)}</div></div>`;});
+  return h+'</div>';
+}
+function build(d){
+  const fi=d.fights||[],be=d.bets||[],bo=d.bettors||[];
+  const tp=d.totalPool||0,ar=d.allResolved||false,tb=new Set(be.map(b=>b.bettor)).size,tc=be.length,av=tc?Math.round(tp/tc):0;
+  const rm=computeRanges(be,fi);
+  const fs=fi.map(f=>{const fb=be.filter(b=>b.fightId===f.id),aB=fb.filter(b=>b.fighter==='A'),bB=fb.filter(b=>b.fighter==='B'),aT=aB.reduce((s,b)=>s+b.amount,0),bT=bB.reduce((s,b)=>s+b.amount,0),fT=aT+bT;return{f,aT,bT,fT,aP:fT?aT/fT*100:0,bP:fT?bT/fT*100:0,ac:aB.length,bc:bB.length,ab:aB,bb:bB};});
+  return renderHero(tp,tb,tc,av)+renderStatsRow(fs,bo)+renderBettorStrip(bo)+fs.map(f=>renderFightCard(f,rm)).join('')+renderLedger(bo,ar)+'<footer>Fight Night &middot; Refreshes every 15s</footer>';
+}
 async function load(){
   const a=document.getElementById('app');
   try{
-    const r=await fetch(SUPABASE_URL+'/rest/v1/pool_state?id=eq.1&select=data',
-      {headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}});
+    const r=await fetch(SUPABASE_URL+'/rest/v1/pool_state?id=eq.1&select=data',{headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}});
     if(!r.ok)throw Error('HTTP '+r.status);
     const j=await r.json();
     if(!j||!j.length)throw Error('Empty');
@@ -210,203 +207,6 @@ async function load(){
     a.innerHTML=build(s);
   }catch(e){a.innerHTML='<div class="off"><div class="ei">&#9888;</div><h2>Cannot Connect</h2><p style="font-size:.8rem;opacity:.6">'+e.message+'</p></div>';}
 }
-
-function build(d){
-  const fights=d.fights||[],bets=d.bets||[],bettors=d.bettors||[];
-  const totalPool=d.totalPool||0;
-  const allResolved=d.allResolved||false;
-  const totalBettors=new Set(bets.map(b=>b.bettor)).size;
-  const totalBets=bets.length;
-  const avgBet=totalBets?Math.round(totalPool/totalBets):0;
-
-  // payout ranges per bettor across all scenarios
-  const ranges=computeRanges(bets,fights);
-
-  // per-fight stats
-  const fstats=fights.map(f=>{
-    const fb=bets.filter(b=>b.fightId===f.id);
-    const aB=fb.filter(b=>b.fighter==='A'),bB=fb.filter(b=>b.fighter==='B');
-    const aT=aB.reduce((s,b)=>s+b.amount,0),bT=bB.reduce((s,b)=>s+b.amount,0);
-    const fT=aT+bT;
-    return{f,aT,bT,fT,aP:fT?aT/fT*100:0,bP:fT?bT/fT*100:0,ac:aB.length,bc:bB.length,
-      ab:aB,bb:bB};
-  });
-
-  let html='';
-
-  // hero
-  html+='<div class="h-box"><div class="h-label">Total Cash in the Pool</div>';
-  html+='<div class="h-pool">$'+totalPool+'</div>';
-  html+='<div class="h-meta"><span><span class="dot dot-on"></span>Live</span>';
-  html+='<span>'+totalBettors+' bettor'+(totalBettors!==1?'s':'')+'</span>';
-  html+='<span>'+totalBets+' ticket'+(totalBets!==1?'s':'')+'</span>';
-  html+='<span>$'+avgBet+' avg</span></div></div>';
-
-  // quick stats
-  const biggestF=fstats.reduce((m,f)=>f.fT>m.fT?f:m,fstats[0]||{fT:0});
-  const mostBetF=fstats.reduce((m,f)=>(f.ac+f.bc)>(m.ac+m.bc)?f:m,fstats[0]||{ac:0,bc:0});
-  const biggestBetter=bettors.reduce((m,b)=>b.paid>(m.paid||0)?b:m,bettors[0]||{});
-  html+='<div class="qs">';
-  html+='<div><div class="qn" style="color:'+bettorColor((biggestBetter.name||'?'))+'">'+(biggestBetter.name?biggestBetter.name:'-')+'</div><div class="ql">Top Bettor</div></div>';
-  html+='<div><div class="qn">'+(biggestF.fT||0)+'</div><div class="ql">Biggest $</div></div>';
-  html+='<div><div class="qn">'+(mostBetF.ac+mostBetF.bc||0)+'</div><div class="ql">Most Bets</div></div>';
-  html+='<div><div class="qn">$'+bettors.reduce((s,b)=>s+Math.abs(b.net||0),0)+'</div><div class="ql">Total P/L</div></div>';
-  html+='</div>';
-
-  // bettor strip
-  if(bettors.length>0){
-    const sorted=[...bettors].sort((a,b)=>b.paid-a.paid);
-    html+='<div class="bs">';
-    sorted.forEach(b=>{
-      const nc=b.net>0?'g':(b.net<0?'n':'n');
-      // don't show red for losses
-      const dc=b.net>0?'g':(b.net<0?'n':'n');
-      const sign=b.net>0?'+':'';
-      html+='<div class="bm"><div class="bi" style="background:'+bettorColor(b.name)+'">'+b.name.charAt(0).toUpperCase()+'</div>';
-      html+='<div class="bn">'+b.name+'</div>';
-      html+='<div class="bv '+dc+'">'+sign+'$'+Math.abs(b.net)+'</div></div>';
-    });
-    html+='</div>';
-  }
-
-  // fight cards
-  fstats.forEach(fs=>{
-    const f=fs.f;
-    const ac=fcolor(f.nameA),bc=fcolor(f.nameB);
-
-    // context label
-    let context='';
-    if(f.id===3)context='Does Alex survive the first round?';
-    else context='Who wins?';
-    const contextShort = f.id===3 ? 'Survives the round?' : 'Who wins?';
-
-    let badge='<span class="bad-p">Pending</span>';
-    if(f.status==='A')badge='<span class="bad-w">'+f.nameA+' Won</span>';
-    else if(f.status==='B')badge='<span class="bad-w" style="border-color:rgba(240,180,41,0.2);color:var(--gold);background:rgba(240,180,41,0.1)">'+f.nameB+' Won</span>';
-    else if(f.status==='refund')badge='<span class="bad-p">Draw / Refund</span>';
-
-    html+='<div class="fc">';
-    html+='<div class="fc-h"><span class="fc-t">Fight '+f.id+'</span><span class="fc-q">'+contextShort+'</span>'+badge+'</div>';
-
-    html+='<div class="fc-f">';
-    html+='<div class="ff"><div class="fn" style="color:'+ac+'">'+f.nameA+'</div><div class="fo">'+f.probA+'%</div><div class="fd" style="color:'+ac+'">$'+fs.aT+'</div></div>';
-    html+='<div class="fc-v">vs</div>';
-    html+='<div class="ff"><div class="fn" style="color:'+bc+'">'+f.nameB+'</div><div class="fo">'+f.probB+'%</div><div class="fd" style="color:'+bc+'">$'+fs.bT+'</div></div>';
-    html+='</div>';
-
-    if(fs.fT>0){
-      // bar
-      const aPct=Math.max(fs.aP,3),bPct=Math.max(fs.bP,3);
-      html+='<div class="fc-tot">Total on this fight: <b>$'+fs.fT+'</b></div>';
-      html+='<div class="fc-bar"><div class="bar">';
-      if(fs.aT>0)html+='<div class="s" style="width:'+aPct+'%;background:'+ac+'">'+(fs.aP>12?'$'+fs.aT:'')+'</div>';
-      if(fs.bT>0)html+='<div class="s" style="width:'+bPct+'%;background:'+bc+'">'+(fs.bP>12?'$'+fs.bT:'')+'</div>';
-      html+='</div></div>';
-
-      // SVG pie chart - each bettor is a slice colored by their unique color
-      // slices grouped: A side then B side
-      const allBets=[...fs.ab,...fs.bb].sort((a,b)=>b.amount-a.amount);
-      const cx=65,cy=65,r=58;
-      let pieSvg='<div class="fc-pie-wrap"><svg viewBox="0 0 130 130" width="130" height="130">';
-
-      // compute total for pie
-      const pieTotal=fs.fT;
-
-      // build slices: all A bets first, then all B bets
-      let aBetsSorted=[...fs.ab].sort((a,b)=>b.amount-a.amount);
-      let bBetsSorted=[...fs.bb].sort((a,b)=>b.amount-a.amount);
-      let slices=[];
-      aBetsSorted.forEach(b=>{slices.push({...b,side:'A',col:bettorColor(b.bettor)});});
-      bBetsSorted.forEach(b=>{slices.push({...b,side:'B',col:bettorColor(b.bettor)});});
-
-      // draw slices
-      let currentAngle=-90;
-      slices.forEach(s=>{
-        const angle=(s.amount/pieTotal)*360;
-        if(angle===0||pieTotal===0)return;
-        const startRad=(currentAngle*Math.PI)/180;
-        const endRad=((currentAngle+angle)*Math.PI)/180;
-        const x1=cx+r*Math.cos(startRad),y1=cy+r*Math.sin(startRad);
-        const x2=cx+r*Math.cos(endRad),y2=cy+r*Math.sin(endRad);
-        const large=angle>180?1:0;
-        pieSvg+=`<path d="M${cx} ${cy} L${x1} ${y1} A${r} ${r} 0 ${large} 1 ${x2} ${y2} Z" fill="${s.col}" opacity="0.85" stroke="#14141f" stroke-width="1"/>`;
-        currentAngle+=angle;
-      });
-
-      // inner circle to make it a donut
-      pieSvg+=`<circle cx="${cx}" cy="${cy}" r="22" fill="#14141f"/>`;
-
-      // center text: total bettors on this fight
-      const totalOnFight=aBetsSorted.length+bBetsSorted.length;
-      pieSvg+=`<text x="${cx}" y="${cy-3}" text-anchor="middle" fill="#e2e2ea" font-size="16" font-weight="800" font-family="'Barlow Condensed',sans-serif">${totalOnFight}</text>`;
-      pieSvg+=`<text x="${cx}" y="${cy+12}" text-anchor="middle" fill="#6b6b80" font-size="8" font-weight="500" font-family="'Outfit',sans-serif">bets</text>`;
-
-      pieSvg+='</svg></div>';
-
-      // side-by-side: pie + legend
-      html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;margin-bottom:8px">';
-      html+=pieSvg;
-
-      // legend: show who bet on who
-      html+='<div style="font-size:0.6rem">';
-      html+='<div style="display:flex;margin-bottom:4px"><span style="width:6px;height:6px;border-radius:50%;background:'+ac+';display:inline-block;margin-right:4px"></span><b style="color:'+ac+'">'+f.nameA+'</b><span style="margin-left:auto;color:var(--dim)">$'+fs.aT+'</span></div>';
-      aBetsSorted.forEach(b=>{
-        const c=bettorColor(b.bettor);
-        const w=estWin(b.amount,f.probA);
-        html+='<div style="display:flex;padding:1px 0 1px 10px"><span style="width:5px;height:5px;border-radius:50%;background:'+c+';display:inline-block;margin-right:3px;flex-shrink:0;margin-top:4px"></span><span style="color:var(--dim);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+b.bettor+'</span><span style="font-weight:600">$'+b.amount+'</span></div>';
-      });
-      html+='<div style="display:flex;margin:4px 0 4px"><span style="width:6px;height:6px;border-radius:50%;background:'+bc+';display:inline-block;margin-right:4px"></span><b style="color:'+bc+'">'+f.nameB+'</b><span style="margin-left:auto;color:var(--dim)">$'+fs.bT+'</span></div>';
-      bBetsSorted.forEach(b=>{
-        const c=bettorColor(b.bettor);
-        html+='<div style="display:flex;padding:1px 0 1px 10px"><span style="width:5px;height:5px;border-radius:50%;background:'+c+';display:inline-block;margin-right:3px;flex-shrink:0;margin-top:4px"></span><span style="color:var(--dim);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+b.bettor+'</span><span style="font-weight:600">$'+b.amount+'</span></div>';
-      });
-      html+='</div></div>';
-
-      // per-bettor breakdown: name, bet, predicted win, total scenario range
-      html+='<div class="fc-b">';
-      html+='<div class="b-title">Bettor Breakdown <span style="font-weight:400;color:var(--dim)">— predicted / total range</span></div>';
-      const sortedBets=[...slices].sort((a,b)=>b.amount-a.amount);
-      sortedBets.forEach(b=>{
-        const prob=b.side==='A'?f.probA:f.probB;
-        const pred=estWin(b.amount,prob);
-        const r=ranges[b.bettor]||{min:0,max:0,est:0};
-        const c=bettorColor(b.bettor);
-        html+='<div class="br"><div class="bri"><span class="bri-d" style="background:'+c+'"></span>'+b.bettor+'</div>';
-        html+='<div class="brr">$'+b.amount+'</div>';
-        html+='<div class="brp"><span style="font-weight:700;color:'+(pred>0?'var(--green)':'var(--dim)')+'">~$'+pred+'</span> <span style="color:var(--dim);font-weight:400">|</span> <span style="color:var(--gold);font-weight:700">$'+r.min+'</span><span style="color:var(--dim)">-</span><span style="color:var(--gold);font-weight:700">$'+r.max+'</span></div>';
-        html+='</div>';
-      });
-      html+='</div>';
-
-    }else{
-      html+='<div style="text-align:center;color:var(--dim);font-size:0.75rem;padding:8px 0">No bets on this fight yet</div>';
-    }
-    html+='</div>';
-  });
-
-  // full ledger
-  if(bettors.length>0){
-    html+='<div class="lc"><div class="lt">All Bettors</div>';
-    html+='<div class="lr lh"><div class="ln">Name</div><div class="lp">Paid</div><div class="lw">Won</div><div class="lv">Net</div></div>';
-    bettors.forEach(b=>{
-      let nc='nc';
-      if(allResolved){if(b.net>0)nc='gc';else if(b.net<0)nc='rc';}
-      else{if(b.net>0)nc='wc';else nc='nc';}
-      const sign=b.net>0?'+':'';
-      const c=bettorColor(b.name);
-      html+='<div class="lr"><div class="ln"><span class="ld" style="background:'+c+'">'+b.name.charAt(0).toUpperCase()+'</span>'+b.name+'</div>';
-      html+='<div class="lp">$'+b.paid+'</div><div class="lw $'+(b.won>0?'gc':'nc')+'">$'+b.won+'</div>';
-      html+='<div class="lv '+nc+'">'+sign+'$'+Math.abs(b.net)+'</div></div>';
-    });
-    html+='</div>';
-  }else{
-    html+='<div class="lc"><div class="lt">No bets placed yet — pool is empty.</div></div>';
-  }
-
-  html+='<footer>Fight Night &middot; Refreshes every 15s</footer>';
-  return html;
-}
-
 load();
 setInterval(load,15000);
 </script>
