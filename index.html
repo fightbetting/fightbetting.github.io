@@ -294,7 +294,7 @@ function openBetCalc(){
   fights.forEach(f=>{
     const opt=document.createElement('option');
     opt.value=f.id;
-    opt.textContent=(f.title||f.nameA+' vs '+f.nameB);
+    opt.textContent=(f.matchup||f.title||f.nameA+' vs '+f.nameB);
     sel.appendChild(opt);
   });
   document.getElementById('betModal').style.display='flex';
@@ -324,6 +324,7 @@ function modalFightChange(){
   document.getElementById('modalAmount').value=5;
   document.getElementById('modalResults').style.display='none';
   document.getElementById('modalWarnings').innerHTML='';
+  modalPick('A');
 }
 function modalPick(side){
   modalState.pick=side;
