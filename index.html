@@ -282,7 +282,7 @@ function renderBettorStrip(bs,ar){
   }).join('')+'</div>';
 }
 function renderFightCard(fs,rm,allBets,allFights){
-  const f=fs.f,ac=fcolor(f.nameA),bc=fcolor(f.nameB),q=f.title||'Who wins?';
+  const f=fs.f,ac=fcolor(f.nameA),bc=fcolor(f.nameB),q=f.title||f.matchup||'Who wins?';
   let badge='<span class="bad-p">Pending</span>';
   if(f.status==='A')badge='<span class="bad-w">'+f.nameA+' Won</span>';
   else if(f.status==='B')badge='<span class="bad-w" style="border-color:rgba(240,180,41,.2);color:var(--gold);background:rgba(240,180,41,.1)">'+f.nameB+' Won</span>';
