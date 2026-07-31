@@ -291,7 +291,7 @@ function renderFightCard(fs,rm){
       const prob=b.fighter==='A'?f.probA:f.probB;
       const thisBet=estWin(b.amount,prob);
       let payHtml;
-      if(f.status==='pending')payHtml=`<span class="brp-sep">Paying:</span> <span class="brp-range">$0</span><span class="brp-sep">&ndash;</span><span class="brp-range">~$${thisBet}</span>`;
+      if(f.status==='pending')payHtml=`<span class="brp-sep">Win:</span> <span class="brp-range">$${b.amount}</span><span class="brp-sep">&ndash;</span><span class="brp-range">~$${thisBet}</span>`;
       else if(f.status===b.fighter)payHtml=`<span class="brp-sep">Paying:</span> <span class="brp-range">~$${thisBet}</span>`;
       else if(f.status==='refund')payHtml=`<span class="brp-sep">Refund:</span> <span class="brp-range">$${b.amount}</span>`;
       else payHtml=`<span class="brp-sep">Lost:</span> <span class="brp-range">$0</span>`;
