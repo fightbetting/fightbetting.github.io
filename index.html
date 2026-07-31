@@ -504,7 +504,7 @@ function modalCalc(){
   if(poolRatio>0.3)warns+=`<div style="color:var(--gold);margin-top:4px">&#9888; Large bet — this would be ${Math.round(poolRatio*100)}% of the pool. You may not get your full payout.</div>`;
   if(amt>10)warns+=`<div style="color:var(--gold);margin-top:4px">&#9888; Over $10 — recommended max. Larger bets depend heavily on others for full payout.</div>`;
   if(prob>70)warns+=`<div style="color:var(--text-muted);margin-top:4px">&#9432; Safe pick — favorite with ${prob}% odds means smaller returns.</div>`;
-  if(prob<30)warns+=`<div style="color:var(--text-muted);margin-top:4px">&#9432; Underdog pick — if they win, you get a bonus from the overflow pool.</div>`;
+  if(prob<30)warns+=`<div style="color:var(--text-muted);margin-top:4px">&#9432; Underdog pick — if they win, you get a bigger share of the pool.</div>`;
   if(r.max-r.min>20)warns+=`<div style="color:var(--text-muted);margin-top:4px">&#9432; Wide range — your payout varies significantly based on other fight results.</div>`;
   if(r.max<amt*0.9)warns+=`<div style="color:var(--gold);margin-top:4px">&#9888; Pool may not cover this bet — expected payout is less than your wager.</div>`;
   document.getElementById('modalWarnings').innerHTML=warns;
