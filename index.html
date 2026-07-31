@@ -271,11 +271,13 @@ function renderFightCard(fs,rm){
     h+=`</div></div>`;
     h+=`<div class="fc-b"><div class="b-title">Estimated Payout Range <span class="b-title-sub">per bettor across all fight outcomes</span></div>`;
     [...slices].sort((a,b)=>b.amount-a.amount).forEach(b=>{
-      const rr=rm[b.bettor]||{min:0,max:0},c=bettorColor(b.bettor);
+      const c=bettorColor(b.bettor);
       const fname=b.fighter==='A'?f.nameA:f.nameB;
+      const prob=b.fighter==='A'?f.probA:f.probB;
+      const thisBet=estWin(b.amount,prob);
       h+=`<div class="br" style="grid-template-columns:1fr auto auto;gap:6px"><div class="bri"><span class="bri-d" style="background:${c}"></span>${b.bettor}</div>
       <div style="font-size:.65rem;color:var(--text);white-space:nowrap">$${b.amount} on ${fname}</div>
-      <div style="font-size:.65rem;white-space:nowrap"><span class="brp-sep">Paying:</span> <span class="brp-range">$${rr.min}</span><span class="brp-sep">&ndash;</span><span class="brp-range">$${rr.max}</span></div></div>`;
+      <div style="font-size:.65rem;white-space:nowrap"><span class="brp-sep">Paying:</span> <span class="brp-range">~$${thisBet}</span></div></div>`;
     });
     h+='</div>';
   }else h+='<div class="empty-fight">No bets on this fight yet</div>';
