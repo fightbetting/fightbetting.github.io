@@ -393,6 +393,7 @@ function modalPick(side){
   a.style.background=side==='A'?ca+'22':'var(--bg)';
   b.style.borderColor=side==='B'?cb:'var(--border)';
   b.style.background=side==='B'?cb+'22':'var(--bg)';
+  modalCalc();
 }
 function modalCalc(){
   if(!modalState.pick){document.getElementById('modalResults').style.display='none';return;}
@@ -412,7 +413,7 @@ function modalCalc(){
   document.getElementById('modalRange').textContent='$'+r.min+' – $'+r.max;
   document.getElementById('modalPool').textContent='$'+totalPool;
   const predRow=document.getElementById('modalPred');
-  if(totalPool>=25){
+  if(totalPool>=30){
     predRow.parentElement.style.display='none';
   }else{
     predRow.parentElement.style.display='';
