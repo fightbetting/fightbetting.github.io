@@ -120,10 +120,10 @@ footer{text-align:center;font-size:.5rem;color:var(--dim);padding:16px 0;text-tr
 
     <div style="margin-bottom:14px;">
       <label style="font-size:.7rem;color:var(--dim);display:block;margin-bottom:4px;">Amount ($)</label>
-      <input id="modalAmount" type="number" min="1" step="1" value="5" oninput="modalCalc()" style="width:100%;padding:10px 12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:1rem;font-family:'Barlow Condensed',sans-serif;">
+      <input id="modalAmount" type="number" min="1" step="1" placeholder="1" oninput="modalAutoCalc()" style="width:100%;padding:10px 12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:1rem;font-family:'Barlow Condensed',sans-serif;">
     </div>
 
-    <button id="modalCalcBtn" onclick="modalCalc()" style="width:100%;padding:10px;margin-bottom:10px;background:var(--gold);color:#121212;border:none;border-radius:6px;font-weight:700;font-size:.85rem;cursor:pointer;">Calculate Winnings</button>
+    <button id="modalCalcBtn" onclick="modalCalcBtn()" style="width:100%;padding:10px;margin-bottom:10px;background:var(--gold);color:#121212;border:none;border-radius:6px;font-weight:700;font-size:.85rem;cursor:pointer;">Calculate Winnings</button>
 
     <div id="modalResults" style="display:none;background:rgba(255,255,255,.03);border-radius:8px;padding:12px;margin-bottom:10px;">
       <div style="display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:6px;"><span style="color:var(--dim)">Estimated Payout</span><span id="modalPred" style="font-weight:700;color:var(--green)"></span></div>
@@ -403,13 +403,20 @@ function build(d){
   return renderHero(tp,tb,tc,av,fi)+renderStatsRow(fs,bo,ar)+renderBettorStrip(bo,ar)+fs.map(f=>renderFightCard(f,rm,be,fi)).join('')+renderLedger(bo,ar)+info+'<footer style="margin-top:10px">Fight Night &middot; Refreshes every 15s</footer>';
 }
 // ── Bet Calculator Modal ────────────────────────────────────────
-let modalState={fightId:0,probA:50,probB:50,nameA:'',nameB:'',colA:'',colB:'',pick:''};
+let modalState={fightId:0,probA:50,probB:50,nameA:'',nameB:'',colA:'',colB:'',pick:'',auto:false};
 
 function openBetCalc(){
   const fights=window._lastData?.fights||[];
   if(!fights.length)return;
   const sel=document.getElementById('modalFightSelect');
   sel.innerHTML='';
+  // placeholder — nothing pre-selected
+  const ph=document.createElement('option');
+  ph.value='';
+  ph.disabled=true;
+  ph.selected=true;
+  ph.textContent='-- Choose a fight --';
+  sel.appendChild(ph);
   fights.forEach(f=>{
     const opt=document.createElement('option');
     opt.value=f.id;
@@ -430,27 +437,24 @@ function modalFightChange(){
   const fid=parseInt(sel.value);
   const fights=window._lastData?.fights||[];
   const f=fights.find(x=>x.id===fid);
-  if(!f)return;
-  const ac=fcolor(f.nameA),bc=fcolor(f.nameB);
-  modalState={fightId:fid,probA:f.probA,probB:f.probB,nameA:f.nameA,nameB:f.nameB,colA:ac,colB:bc,pick:''};
-  document.getElementById('modalOdds').textContent=f.nameA+' ('+f.probA+'%)  vs  '+f.nameB+' ('+f.probB+'%)';
-  document.getElementById('modalPickA').textContent=f.nameA;
-  document.getElementById('modalPickA').style.borderColor='var(--border)';
-  document.getElementById('modalPickA').style.background='var(--bg)';
-  document.getElementById('modalPickB').textContent=f.nameB;
-  document.getElementById('modalPickB').style.borderColor='var(--border)';
-  document.getElementById('modalPickB').style.background='var(--bg)';
-  document.getElementById('modalAmount').value=5;
+  // always reset selection state (nothing pre-selected)
+  modalState={fightId:fid||0,probA:50,probB:50,nameA:'',nameB:'',colA:'',colB:'',pick:'',auto:false};
+  document.getElementById('modalOdds').textContent='';
+  document.getElementById('modalPickA').textContent='';
+  document.getElementById('modalPickB').textContent='';
+  const pa=document.getElementById('modalPickA'),pb=document.getElementById('modalPickB');
+  if(pa){pa.style.borderColor='var(--border)';pa.style.background='var(--bg)';}
+  if(pb){pb.style.borderColor='var(--border)';pb.style.background='var(--bg)';}
+  document.getElementById('modalAmount').value='';
   document.getElementById('modalResults').style.display='none';
   document.getElementById('modalWarnings').innerHTML='';
-  // auto-select fighter A so Calculate button works
-  modalState.pick='A';
-  const a=document.getElementById('modalPickA'),b=document.getElementById('modalPickB');
-  if(a){
-    const ca=modalState.colA,cb=modalState.colB;
-    a.style.borderColor=ca; a.style.background=ca+'22';
-    b.style.borderColor='var(--border)'; b.style.background='var(--bg)';
-  }
+  if(!f)return;
+  const ac=fcolor(f.nameA),bc=fcolor(f.nameB);
+  modalState.fightId=fid;modalState.probA=f.probA;modalState.probB=f.probB;
+  modalState.nameA=f.nameA;modalState.nameB=f.nameB;modalState.colA=ac;modalState.colB=bc;
+  document.getElementById('modalOdds').textContent=f.nameA+' ('+f.probA+'%)  vs  '+f.nameB+' ('+f.probB+'%)';
+  document.getElementById('modalPickA').textContent=f.nameA;
+  document.getElementById('modalPickB').textContent=f.nameB;
 }
 function modalPick(side){
   modalState.pick=side;
@@ -460,10 +464,17 @@ function modalPick(side){
   a.style.background=side==='A'?ca+'22':'var(--bg)';
   b.style.borderColor=side==='B'?cb:'var(--border)';
   b.style.background=side==='B'?cb+'22':'var(--bg)';
+  if(modalState.auto)modalCalc();
+}
+function modalCalcBtn(){
+  modalState.auto=true;
   modalCalc();
 }
+function modalAutoCalc(){
+  if(modalState.auto)modalCalc();
+}
 function modalCalc(){
-  if(!modalState.pick){document.getElementById('modalResults').style.display='none';return;}
+  if(!modalState.pick||!modalState.fightId){document.getElementById('modalResults').style.display='none';return;}
   const amt=parseInt(document.getElementById('modalAmount').value)||0;
   if(amt<1){document.getElementById('modalResults').style.display='none';return;}
   const prob=modalState.pick==='A'?modalState.probA:modalState.probB;
