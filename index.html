@@ -225,6 +225,29 @@ function computeRanges(bets,fights){
   return rm;
 }
 
+// simulate this bet winning + all other fight outcomes, return real range
+function computeBetRange(bet,bets,fights){
+  const modFights=fights.map(f=>{
+    if(f.id===bet.fightId)return{...f,status:bet.fighter}; // their pick wins
+    return f;
+  });
+  const pending=modFights.filter(f=>f.status==='pending');
+  const scenarios=pending.length?Math.pow(2,pending.length):1;
+  let min=Infinity,max=-Infinity;
+  for(let s=0;s<scenarios;s++){
+    const scFights=modFights.map(f=>{
+      if(f.status!=='pending')return f;
+      const idx=pending.findIndex(p=>p.id===f.id);
+      return{...f,status:s&(1<<idx)?'A':'B'};
+    });
+    const payouts=computePayouts(scFights,bets);
+    const p=payouts[bet.bettor]||{won:0};
+    if(p.won<min)min=p.won;
+    if(p.won>max)max=p.won;
+  }
+  return{min:Math.round(min)||0,max:Math.round(max)||0};
+}
+
 function renderHero(pool,bettors,totalBets,avg,fightsData){
   const btn = `<button onclick="openBetCalc()" style="position:absolute;top:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-size:.65rem;cursor:pointer;font-family:'Outfit',sans-serif;">Test Bet</button>`;
   return `<div class="h-box" style="position:relative">${btn}<div class="h-label">Total Cash in the Pool</div><div class="h-pool">$${pool}</div><div class="h-meta"><span><span class="dot dot-on"></span>Live</span><span>${bettors} bettor${bettors!==1?'s':''}</span><span>${totalBets} total bets</span><span>$${avg} avg</span></div></div>`;
@@ -258,7 +281,7 @@ function renderBettorStrip(bs,ar){
     return`<div class="bm"><div class="bi" style="background:${bettorColor(b.name)}">${b.name.charAt(0).toUpperCase()}</div><div class="bn">${b.name}</div><div class="bv ${cls}">${txt}</div></div>`;
   }).join('')+'</div>';
 }
-function renderFightCard(fs,rm){
+function renderFightCard(fs,rm,allBets,allFights){
   const f=fs.f,ac=fcolor(f.nameA),bc=fcolor(f.nameB),q=f.title||'Who wins?';
   let badge='<span class="bad-p">Pending</span>';
   if(f.status==='A')badge='<span class="bad-w">'+f.nameA+' Won</span>';
@@ -291,7 +314,10 @@ function renderFightCard(fs,rm){
       const prob=b.fighter==='A'?f.probA:f.probB;
       const thisBet=estWin(b.amount,prob);
       let payHtml;
-      if(f.status==='pending')payHtml=`<span class="brp-sep">Win:</span> <span class="brp-range">$${b.amount}</span><span class="brp-sep">&ndash;</span><span class="brp-range">~$${thisBet}</span>`;
+      if(f.status==='pending'){
+        const br=computeBetRange(b,allBets,allFights);
+        payHtml=`<span class="brp-sep">Win:</span> <span class="brp-range">$${br.min}</span><span class="brp-sep">&ndash;</span><span class="brp-range">$${br.max}</span>`;
+      }
       else if(f.status===b.fighter)payHtml=`<span class="brp-sep">Paying:</span> <span class="brp-range">~$${thisBet}</span>`;
       else if(f.status==='refund')payHtml=`<span class="brp-sep">Refund:</span> <span class="brp-range">$${b.amount}</span>`;
       else payHtml=`<span class="brp-sep">Lost:</span> <span class="brp-range">$0</span>`;
@@ -374,7 +400,7 @@ function build(d){
     </details>
   </div>`;
 
-  return renderHero(tp,tb,tc,av,fi)+renderStatsRow(fs,bo,ar)+renderBettorStrip(bo,ar)+fs.map(f=>renderFightCard(f,rm)).join('')+renderLedger(bo,ar)+info+'<footer style="margin-top:10px">Fight Night &middot; Refreshes every 15s</footer>';
+  return renderHero(tp,tb,tc,av,fi)+renderStatsRow(fs,bo,ar)+renderBettorStrip(bo,ar)+fs.map(f=>renderFightCard(f,rm,be,fi)).join('')+renderLedger(bo,ar)+info+'<footer style="margin-top:10px">Fight Night &middot; Refreshes every 15s</footer>';
 }
 // ── Bet Calculator Modal ────────────────────────────────────────
 let modalState={fightId:0,probA:50,probB:50,nameA:'',nameB:'',colA:'',colB:'',pick:''};
