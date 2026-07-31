@@ -290,9 +290,14 @@ function renderFightCard(fs,rm){
       const fname=b.fighter==='A'?f.nameA:f.nameB;
       const prob=b.fighter==='A'?f.probA:f.probB;
       const thisBet=estWin(b.amount,prob);
+      let payHtml;
+      if(f.status==='pending')payHtml=`<span class="brp-sep">Paying:</span> <span class="brp-range">$0</span><span class="brp-sep">&ndash;</span><span class="brp-range">~$${thisBet}</span>`;
+      else if(f.status===b.fighter)payHtml=`<span class="brp-sep">Paying:</span> <span class="brp-range">~$${thisBet}</span>`;
+      else if(f.status==='refund')payHtml=`<span class="brp-sep">Refund:</span> <span class="brp-range">$${b.amount}</span>`;
+      else payHtml=`<span class="brp-sep">Lost:</span> <span class="brp-range">$0</span>`;
       h+=`<div class="br" style="grid-template-columns:1fr auto auto;gap:6px"><div class="bri"><span class="bri-d" style="background:${c}"></span>${b.bettor}</div>
       <div style="font-size:.65rem;color:var(--text);white-space:nowrap">$${b.amount} on ${fname}</div>
-      <div style="font-size:.65rem;white-space:nowrap"><span class="brp-sep">Paying:</span> <span class="brp-range">~$${thisBet}</span></div></div>`;
+      <div style="font-size:.65rem;white-space:nowrap">${payHtml}</div></div>`;
     });
     h+='</div>';
   }else h+='<div class="empty-fight">No bets on this fight yet</div>';
@@ -300,19 +305,24 @@ function renderFightCard(fs,rm){
 }
 function renderLedger(bs,ar){
   if(!bs.length)return'<div class="lc"><div class="lt">No bets placed yet.</div></div>';
-  let h=`<div class="lc"><div class="lt">All Bettors</div><div class="lr lh"><div class="ln">Name</div><div class="lp">Paid</div><div class="lw">Won</div><div class="lv">Net</div></div>`;
+  let h=`<div class="lc"><div class="lt">All Bettors</div>`;
+  if(!ar){
+    // Pending: only show how much each person bought in
+    h+=`<div class="lr lh"><div class="ln">Name</div><div class="lp">Bought In For</div></div>`;
+    bs.forEach(b=>{
+      const c=bettorColor(b.name);
+      h+=`<div class="lr"><div class="ln"><span class="ld" style="background:${c}">${b.name.charAt(0).toUpperCase()}</span>${b.name}</div><div class="lp">$${b.paid}</div></div>`;
+    });
+    return h+'</div>';
+  }
+  // Resolved: paid / won / net
+  h+=`<div class="lr lh"><div class="ln">Name</div><div class="lp">Paid</div><div class="lw">Won</div><div class="lv">Net</div></div>`;
   bs.forEach(b=>{
     const c=bettorColor(b.name);
     let netHtml;
-    if(ar){
-      if(b.net>0)netHtml=`<span class="gc">+$${b.net}</span>`;
-      else if(b.net<0)netHtml=`<span class="rc">-$${Math.abs(b.net)}</span>`;
-      else netHtml=`<span class="nc">&ndash;</span>`;
-    }else{
-      if(b.net>0)netHtml=`<span class="wc">+$${b.net}</span>`;
-      else if(b.net<0)netHtml=`<span class="nc">-$${Math.abs(b.net)}</span>`;
-      else netHtml=`<span class="nc">&ndash;</span>`;
-    }
+    if(b.net>0)netHtml=`<span class="gc">+$${b.net}</span>`;
+    else if(b.net<0)netHtml=`<span class="rc">-$${Math.abs(b.net)}</span>`;
+    else netHtml=`<span class="nc">&ndash;</span>`;
     const wonHtml=b.won>0?`<span class="gc">$${b.won}</span>`:`<span class="nc">&ndash;</span>`;
     h+=`<div class="lr"><div class="ln"><span class="ld" style="background:${c}">${b.name.charAt(0).toUpperCase()}</span>${b.name}</div><div class="lp">$${b.paid}</div><div class="lw">${wonHtml}</div><div class="lv">${netHtml}</div></div>`;
   });
