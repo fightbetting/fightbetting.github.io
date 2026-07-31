@@ -286,7 +286,20 @@ function renderFightCard(fs,rm){
 function renderLedger(bs,ar){
   if(!bs.length)return'<div class="lc"><div class="lt">No bets placed yet.</div></div>';
   let h=`<div class="lc"><div class="lt">All Bettors</div><div class="lr lh"><div class="ln">Name</div><div class="lp">Paid</div><div class="lw">Won</div><div class="lv">Net</div></div>`;
-  bs.forEach(b=>{let nc='nc';if(ar){if(b.net>0)nc='gc';else if(b.net<0)nc='rc';}else if(b.net>0)nc='wc';const sg=b.net>0?'+':'',c=bettorColor(b.name);h+=`<div class="lr"><div class="ln"><span class="ld" style="background:${c}">${b.name.charAt(0).toUpperCase()}</span>${b.name}</div><div class="lp">$${b.paid}</div><div class="lw gc">$${b.won}</div><div class="lv ${nc}">${sg}$${Math.abs(b.net)}</div></div>`;});
+  bs.forEach(b=>{
+    const c=bettorColor(b.name);
+    let netHtml;
+    if(ar){
+      if(b.net>0)netHtml=`<span class="gc">+$${b.net}</span>`;
+      else if(b.net<0)netHtml=`<span class="rc">-$${Math.abs(b.net)}</span>`;
+      else netHtml=`<span class="nc">&ndash;</span>`;
+    }else{
+      if(b.net>0)netHtml=`<span class="wc">+$${b.net}</span>`;
+      else if(b.net<0)netHtml=`<span class="nc">-$${Math.abs(b.net)}</span>`;
+      else netHtml=`<span class="nc">&ndash;</span>`;
+    }
+    h+=`<div class="lr"><div class="ln"><span class="ld" style="background:${c}">${b.name.charAt(0).toUpperCase()}</span>${b.name}</div><div class="lp">$${b.paid}</div><div class="lw gc">$${b.won}</div><div class="lv">${netHtml}</div></div>`;
+  });
   return h+'</div>';
 }
 function build(d){
