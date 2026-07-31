@@ -407,11 +407,17 @@ function modalCalc(){
   const ranges=computeRanges(testBets,fights);
   const r=ranges['__test__']||{min:0,max:0};
 
-  document.getElementById('modalResults').style.display='block';
-  document.getElementById('modalPred').textContent='~$'+pred;
-  document.getElementById('modalRange').textContent='$'+r.min+' – $'+r.max;
   const totalPool=testBets.reduce((s,b)=>s+b.amount,0);
+  document.getElementById('modalResults').style.display='block';
+  document.getElementById('modalRange').textContent='$'+r.min+' – $'+r.max;
   document.getElementById('modalPool').textContent='$'+totalPool;
+  const predRow=document.getElementById('modalPred');
+  if(totalPool>=25){
+    predRow.parentElement.style.display='none';
+  }else{
+    predRow.parentElement.style.display='';
+    predRow.textContent='~$'+pred;
+  }
 
   let warns='';
   if(totalPool<20)warns+=`<div style="color:var(--gold);margin-top:4px">&#9888; Small pot — currently only $${totalPool} in the pool. It will grow as more people bet, increasing payouts.</div>`;
