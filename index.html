@@ -318,7 +318,7 @@ function renderFightCard(fs,rm,allBets,allFights){
         const br=computeBetRange(b,allBets,allFights);
         payHtml=`<span class="brp-sep">Win:</span> <span class="brp-range">$${br.min}</span><span class="brp-sep">&ndash;</span><span class="brp-range">$${br.max}</span>`;
       }
-      else if(f.status===b.fighter)payHtml=`<span class="brp-sep">Paying:</span> <span class="brp-range">~$${thisBet}</span>`;
+      else if(f.status===b.fighter)payHtml=`<span class="brp-sep">Paying:</span> <span class="brp-range">$${thisBet}</span>`;
       else if(f.status==='refund')payHtml=`<span class="brp-sep">Refund:</span> <span class="brp-range">$${b.amount}</span>`;
       else payHtml=`<span class="brp-sep">Lost:</span> <span class="brp-range">$0</span>`;
       h+=`<div class="br" style="grid-template-columns:1fr auto auto;gap:6px"><div class="bri"><span class="bri-d" style="background:${c}"></span>${b.bettor}</div>
